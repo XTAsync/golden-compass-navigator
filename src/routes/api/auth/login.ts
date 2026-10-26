@@ -1,12 +1,13 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { getDb } from "@/lib/db.server";
-import { authResponse, hashSessionToken, newSessionToken, requestUserAgent, sessionCookie, verifyPassword } from "@/lib/standalone-auth.server";
+import { authResponse, hasSameOrigin, hashSessionToken, newSessionToken, requestUserAgent, sessionCookie, verifyPassword } from "@/lib/standalone-auth.server";
 import { rateLimit } from "@/lib/rate-limit.server";
 
 export const Route = createFileRoute("/api/auth/login")({
   server: { handlers: {
     POST: async ({ request }) => {
       try {
+        if (!hasSameOrigin(request)) return authResponse({ error: "Invalid request origin." }, 403);
         const body = await request.json() as { email?: string; password?: string };
         const email = String(body.email ?? "").trim().toLowerCase();
         const password = String(body.password ?? "");

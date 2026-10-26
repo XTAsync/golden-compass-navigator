@@ -4,7 +4,7 @@
 BEGIN;
 CREATE EXTENSION IF NOT EXISTS pgcrypto;
 
--- Standalone identity store. Hash passwords with Argon2id in the application.
+-- Standalone identity store. Hash passwords with scrypt in the application.
 CREATE TABLE public.app_users (
  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
  email text NOT NULL,

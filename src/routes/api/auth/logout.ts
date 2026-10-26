@@ -1,11 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { getDb } from "@/lib/db.server";
-import { authResponse, clearSessionCookie, hashSessionToken, readSessionToken } from "@/lib/standalone-auth.server";
+import { authResponse, clearSessionCookie, hasSameOrigin, hashSessionToken, readSessionToken } from "@/lib/standalone-auth.server";
 
 export const Route = createFileRoute("/api/auth/logout")({
   server: { handlers: {
     POST: async ({ request }) => {
       try {
+        if (!hasSameOrigin(request)) return authResponse({ error: "Invalid request origin." }, 403);
         const token = readSessionToken(request);
         if (token) {
           await getDb()`UPDATE public.auth_sessions SET revoked_at = now()

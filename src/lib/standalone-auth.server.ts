@@ -106,6 +106,7 @@ export async function getStandaloneSession(request: Request): Promise<Standalone
        AND s.revoked_at IS NULL
        AND s.expires_at > now()
        AND u.is_disabled = false
+       AND COALESCE(p.is_active, true) = true
      GROUP BY u.id, p.id
      LIMIT 1
   `;
@@ -129,6 +130,11 @@ export function normalizeKenyanPhone(input: string): string | null {
   if (digits.startsWith("0")) digits = "254" + digits.slice(1);
   else if (digits.startsWith("7") || digits.startsWith("1")) digits = "254" + digits;
   return /^254[17]\d{8}$/.test(digits) ? digits : null;
+}
+
+export function hasSameOrigin(request: Request): boolean {
+  const origin = request.headers.get("origin");
+  return !origin || origin === new URL(request.url).origin;
 }
 
 export function requestUserAgent(request: Request): string | null {
