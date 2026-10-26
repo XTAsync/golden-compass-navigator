@@ -20,6 +20,8 @@ jobs:
         with:
           node-version: 22
           cache: npm
+      - name: Reconcile the existing lockfile
+        run: npm install --package-lock-only --legacy-peer-deps
       - name: Install dependencies
         run: npm ci --legacy-peer-deps
       - name: Build application
