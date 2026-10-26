@@ -8,6 +8,9 @@ on:
     branches:
       - main
 
+permissions:
+  contents: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -22,14 +25,17 @@ jobs:
           cache: npm
       - name: Reconcile the existing lockfile
         run: npm install --package-lock-only --legacy-peer-deps
+      - name: Commit repaired lockfile on migration branch
+        if: github.event_name == 'push' && github.ref == 'refs/heads/migration/independent-postgres'
+        run: |
+          if ! git diff --quiet -- package-lock.json; then
+            git config user.name 'github-actions[bot]'
+            git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+            git add package-lock.json
+            git commit -m 'Repair npm lockfile for independent migration'
+            git push origin HEAD:${GITHUB_REF_NAME}
+          fi
       - name: Install dependencies
         run: npm ci --legacy-peer-deps
       - name: Build application
         run: npm run build
-
-      - name: Upload reconciled lockfile for review
-        uses: actions/upload-artifact@v4
-        with:
-          name: reconciled-package-lock
-          path: package-lock.json
-          if-no-files-found: error
