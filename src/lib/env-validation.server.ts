@@ -10,7 +10,7 @@ interface EnvVar {
 }
 
 const ENV_VARS: EnvVar[] = [
-  // Supabase (required)
+  // Supabase (required during the migration; remove after all call sites are migrated)
   { name: "SUPABASE_URL", required: true, description: "Supabase project URL" },
   { name: "SUPABASE_PUBLISHABLE_KEY", required: true, description: "Supabase anon/publishable key" },
   { name: "SUPABASE_SERVICE_ROLE_KEY", required: true, description: "Supabase service role key (server-side only)" },

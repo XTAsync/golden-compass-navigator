@@ -25,3 +25,7 @@ The baseline rejects zero/negative wallet mutations, performs each balance updat
 
 ## Secrets
 The repository's current main branch tracks a `.env` file. This branch removes it from the working tree and ignores local environment files, but deleting a file does not remove it from Git history. Review any values previously committed and rotate any private credentials that may have been exposed. Never commit service credentials, database passwords, session secrets, or M-Pesa secrets. Keep only non-secret variable names/placeholders in `.env.example`.
+
+## Runtime connection module
+
+`src/lib/db.server.ts` now provides a lazy PostgreSQL.js connection pool via `getDb()`. It reads `DATABASE_URL` only on the server and deliberately does not connect until called. Existing Supabase-dependent routes are not switched to this pool yet; keep Supabase configured until each data-access path has been migrated and tested.
