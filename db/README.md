@@ -33,3 +33,7 @@ After applying the baseline to a disposable database, run `psql "$DATABASE_URL" 
 ## Runtime connection module
 
 `src/lib/db.server.ts` now provides a lazy PostgreSQL.js connection pool via `getDb()`. It reads `DATABASE_URL` only on the server and deliberately does not connect until called. Existing Supabase-dependent routes are not switched to this pool yet; keep Supabase configured until each data-access path has been migrated and tested.
+
+## Standalone authentication endpoints (initial implementation)
+
+The branch also contains isolated register, login, session-inspection, and logout handlers under `/api/auth/*`. Passwords are stored as scrypt hashes; browser sessions use a random HttpOnly cookie while only the SHA-256 token hash is stored in PostgreSQL. These handlers are not yet wired to the existing React auth provider or existing Supabase-protected business routes. Do not switch users to them until route authorization and all data access have been migrated together. Password-reset email delivery and MFA re-enrollment are not implemented in this phase.
