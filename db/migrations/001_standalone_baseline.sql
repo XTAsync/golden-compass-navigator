@@ -119,12 +119,12 @@ CREATE TABLE public.transactions (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id UUID NOT NULL REFERENCES public.app_users(id) ON DELETE CASCADE,
   pool_id UUID REFERENCES public.investment_pools(id),
-  type TEXT CHECK (type IN ('deposit','withdrawal')),
+  type TEXT NOT NULL CHECK (type IN ('deposit','withdrawal','invest')),
   amount DECIMAL(18,2) NOT NULL,
   mpesa_reference TEXT,
   mpesa_checkout_id TEXT,
   status TEXT DEFAULT 'pending'
-    CHECK (status IN ('pending','confirmed','failed')),
+    CHECK (status IN ('pending','confirmed','failed','cancelled','processing','completed')),
   created_at TIMESTAMPTZ DEFAULT now(),
   confirmed_at TIMESTAMPTZ
 );
@@ -627,4 +627,9 @@ END;
 $$;
 REVOKE ALL ON FUNCTION public.debit_wallet(uuid, numeric) FROM PUBLIC;
 REVOKE ALL ON FUNCTION public.credit_wallet(uuid, numeric) FROM PUBLIC;
+REVOKE ALL ON FUNCTION public.has_role(uuid, public.app_role) FROM PUBLIC;
+REVOKE ALL ON FUNCTION public.create_app_user_records() FROM PUBLIC;
+REVOKE ALL ON FUNCTION public.notify_transaction_change() FROM PUBLIC;
+REVOKE ALL ON FUNCTION public.notify_kyc_change() FROM PUBLIC;
+REVOKE ALL ON FUNCTION public.update_updated_at_column() FROM PUBLIC;
 COMMIT;
