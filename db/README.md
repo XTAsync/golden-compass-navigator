@@ -26,6 +26,10 @@ The baseline rejects zero/negative wallet mutations, performs each balance updat
 ## Secrets
 The repository's current main branch tracks a `.env` file. This branch removes it from the working tree and ignores local environment files, but deleting a file does not remove it from Git history. Review any values previously committed and rotate any private credentials that may have been exposed. Never commit service credentials, database passwords, session secrets, or M-Pesa secrets. Keep only non-secret variable names/placeholders in `.env.example`.
 
+## Smoke test
+
+After applying the baseline to a disposable database, run `psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f db/tests/001_standalone_smoke.sql`. It verifies signup bootstrap, default investor role, successful wallet mutations, rejected negative/overdraft operations, and journal consistency; its transaction rolls back all test data. This is a smoke test, not a substitute for concurrency, payment-callback idempotency, authorization, or full application tests.
+
 ## Runtime connection module
 
 `src/lib/db.server.ts` now provides a lazy PostgreSQL.js connection pool via `getDb()`. It reads `DATABASE_URL` only on the server and deliberately does not connect until called. Existing Supabase-dependent routes are not switched to this pool yet; keep Supabase configured until each data-access path has been migrated and tested.
