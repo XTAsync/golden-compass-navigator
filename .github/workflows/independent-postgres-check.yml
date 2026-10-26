@@ -26,3 +26,10 @@ jobs:
         run: npm ci --legacy-peer-deps
       - name: Build application
         run: npm run build
+
+      - name: Upload reconciled lockfile for review
+        uses: actions/upload-artifact@v4
+        with:
+          name: reconciled-package-lock
+          path: package-lock.json
+          if-no-files-found: error
