@@ -24,3 +24,32 @@ jobs:
         run: npm ci --legacy-peer-deps
       - name: Build application
         run: npm run build
+
+  database-smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      DATABASE_URL: postgresql://gc_test:gc_test@localhost:5432/golden_compass_test
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: gc_test
+          POSTGRES_PASSWORD: gc_test
+          POSTGRES_DB: golden_compass_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U gc_test -d golden_compass_test"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+      - name: Install PostgreSQL client
+        run: sudo apt-get update && sudo apt-get install -y postgresql-client
+      - name: Apply standalone schema
+        run: psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f db/migrations/001_standalone_baseline.sql
+      - name: Run database smoke test
+        run: psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f db/tests/001_standalone_smoke.sql
