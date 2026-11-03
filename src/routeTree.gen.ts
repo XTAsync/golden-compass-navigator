@@ -9,126 +9,65 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as TradeRouteImport } from './routes/trade'
-import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
-import { Route as SignupRouteImport } from './routes/signup'
-import { Route as ResetPasswordRouteImport } from './routes/reset-password'
-import { Route as ProfileRouteImport } from './routes/profile'
-import { Route as PortfolioRouteImport } from './routes/portfolio'
-import { Route as PoolsRouteImport } from './routes/pools'
-import { Route as OrdersRouteImport } from './routes/orders'
-import { Route as NavigatorRouteImport } from './routes/navigator'
-import { Route as McpRouteImport } from './routes/mcp'
-import { Route as MarketsRouteImport } from './routes/markets'
-import { Route as LoginRouteImport } from './routes/login'
-import { Route as KycRouteImport } from './routes/kyc'
-import { Route as HomeRouteImport } from './routes/home'
-import { Route as HistoryRouteImport } from './routes/history'
-import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
-import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as StockSymbolRouteImport } from './routes/stock.$symbol'
-import { Route as LegalTermsRouteImport } from './routes/legal.terms'
-import { Route as LegalRiskDisclosureRouteImport } from './routes/legal.risk-disclosure'
-import { Route as LegalPrivacyRouteImport } from './routes/legal.privacy'
-import { Route as GuidesDividendTrackingRouteImport } from './routes/guides.dividend-tracking'
-import { Route as ApiWithdrawRequestRouteImport } from './routes/api/withdraw-request'
-import { Route as ApiWithdrawApproveRouteImport } from './routes/api/withdraw-approve'
-import { Route as ApiWalletInvestRouteImport } from './routes/api/wallet-invest'
-import { Route as ApiTradeRouteImport } from './routes/api/trade'
-import { Route as ApiQuoteRouteImport } from './routes/api/quote'
-import { Route as ApiMpesaStkRouteImport } from './routes/api/mpesa-stk'
-import { Route as ApiMpesaStatusRouteImport } from './routes/api/mpesa-status'
-import { Route as ApiMpesaCallbackRouteImport } from './routes/api/mpesa-callback'
-import { Route as ApiMpesaB2cResultRouteImport } from './routes/api/mpesa-b2c-result'
-import { Route as ApiFeesRouteImport } from './routes/api/fees'
-import { Route as ApiCandlesRouteImport } from './routes/api/candles'
-import { Route as AdminTransactionsRouteImport } from './routes/admin.transactions'
-import { Route as AdminKycRouteImport } from './routes/admin.kyc'
-import { Route as Char91DotwellKnownChar93OauthProtectedResourceRouteImport } from './routes/[.well-known]/oauth-protected-resource'
+import { Route as AccountRouteImport } from './routes/account'
+import { Route as AdminRouteImport } from './routes/admin'
+import { Route as CommandRouteImport } from './routes/command'
+import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
+import { Route as HistoryRouteImport } from './routes/history'
+import { Route as HomeRouteImport } from './routes/home'
+import { Route as KycRouteImport } from './routes/kyc'
+import { Route as LoginRouteImport } from './routes/login'
+import { Route as MarketsRouteImport } from './routes/markets'
+import { Route as McpRouteImport } from './routes/mcp'
+import { Route as NavigatorRouteImport } from './routes/navigator'
+import { Route as OrdersRouteImport } from './routes/orders'
+import { Route as PocketRouteImport } from './routes/pocket'
+import { Route as PoolsRouteImport } from './routes/pools'
+import { Route as PortfolioRouteImport } from './routes/portfolio'
+import { Route as ProfileRouteImport } from './routes/profile'
+import { Route as QuickRouteImport } from './routes/quick'
+import { Route as ResetPasswordRouteImport } from './routes/reset-password'
+import { Route as SignupRouteImport } from './routes/signup'
+import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
+import { Route as TradeRouteImport } from './routes/trade'
 import { Route as Char91DotmcpChar93ListToolsRouteImport } from './routes/[.mcp]/list-tools'
-import { Route as ApiPublicCheckPriceAlertsRouteImport } from './routes/api/public/check-price-alerts'
-import { Route as ApiPublicAmlScanRouteImport } from './routes/api/public/aml-scan'
+import { Route as Char91DotwellKnownChar93OauthProtectedResourceRouteImport } from './routes/[.well-known]/oauth-protected-resource'
+import { Route as AdminKycRouteImport } from './routes/admin.kyc'
+import { Route as AdminTransactionsRouteImport } from './routes/admin.transactions'
+import { Route as ApiAdminResolveDepositRouteImport } from './routes/api/admin-resolve-deposit'
+import { Route as ApiCandlesRouteImport } from './routes/api/candles'
+import { Route as ApiCapabilitiesRouteImport } from './routes/api/capabilities'
+import { Route as ApiFeesRouteImport } from './routes/api/fees'
+import { Route as ApiMoneyConfigRouteImport } from './routes/api/money-config'
+import { Route as ApiMpesaB2cResultRouteImport } from './routes/api/mpesa-b2c-result'
+import { Route as ApiMpesaB2cTimeoutRouteImport } from './routes/api/mpesa-b2c-timeout'
+import { Route as ApiMpesaCallbackRouteImport } from './routes/api/mpesa-callback'
+import { Route as ApiMpesaStatusRouteImport } from './routes/api/mpesa-status'
+import { Route as ApiMpesaStkRouteImport } from './routes/api/mpesa-stk'
+import { Route as ApiQuoteRouteImport } from './routes/api/quote'
+import { Route as ApiTradeRouteImport } from './routes/api/trade'
+import { Route as ApiWalletInvestRouteImport } from './routes/api/wallet-invest'
+import { Route as ApiWithdrawApproveRouteImport } from './routes/api/withdraw-approve'
+import { Route as ApiWithdrawRequestRouteImport } from './routes/api/withdraw-request'
+import { Route as GuidesDividendTrackingRouteImport } from './routes/guides.dividend-tracking'
+import { Route as LegalPrivacyRouteImport } from './routes/legal.privacy'
+import { Route as LegalRiskDisclosureRouteImport } from './routes/legal.risk-disclosure'
+import { Route as LegalTermsRouteImport } from './routes/legal.terms'
+import { Route as StockSymbolRouteImport } from './routes/stock.$symbol'
 import { Route as Char91DotmcpChar93InvokeToolToolRouteImport } from './routes/[.mcp]/invoke-tool/$tool'
+import { Route as ApiPublicAmlScanRouteImport } from './routes/api/public/aml-scan'
+import { Route as ApiPublicCheckPriceAlertsRouteImport } from './routes/api/public/check-price-alerts'
+import { Route as ApiPublicReconcileDepositsRouteImport } from './routes/api/public/reconcile-deposits'
 
-const TradeRoute = TradeRouteImport.update({
-  id: '/trade',
-  path: '/trade',
+const IndexRoute = IndexRouteImport.update({
+  id: '/',
+  path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
-  id: '/sitemap.xml',
-  path: '/sitemap.xml',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SignupRoute = SignupRouteImport.update({
-  id: '/signup',
-  path: '/signup',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ResetPasswordRoute = ResetPasswordRouteImport.update({
-  id: '/reset-password',
-  path: '/reset-password',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ProfileRoute = ProfileRouteImport.update({
-  id: '/profile',
-  path: '/profile',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const PortfolioRoute = PortfolioRouteImport.update({
-  id: '/portfolio',
-  path: '/portfolio',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const PoolsRoute = PoolsRouteImport.update({
-  id: '/pools',
-  path: '/pools',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const OrdersRoute = OrdersRouteImport.update({
-  id: '/orders',
-  path: '/orders',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const NavigatorRoute = NavigatorRouteImport.update({
-  id: '/navigator',
-  path: '/navigator',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const McpRoute = McpRouteImport.update({
-  id: '/mcp',
-  path: '/mcp',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const MarketsRoute = MarketsRouteImport.update({
-  id: '/markets',
-  path: '/markets',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const LoginRoute = LoginRouteImport.update({
-  id: '/login',
-  path: '/login',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const KycRoute = KycRouteImport.update({
-  id: '/kyc',
-  path: '/kyc',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const HomeRoute = HomeRouteImport.update({
-  id: '/home',
-  path: '/home',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const HistoryRoute = HistoryRouteImport.update({
-  id: '/history',
-  path: '/history',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ForgotPasswordRoute = ForgotPasswordRouteImport.update({
-  id: '/forgot-password',
-  path: '/forgot-password',
+const AccountRoute = AccountRouteImport.update({
+  id: '/account',
+  path: '/account',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminRoute = AdminRouteImport.update({
@@ -136,84 +75,126 @@ const AdminRoute = AdminRouteImport.update({
   path: '/admin',
   getParentRoute: () => rootRouteImport,
 } as any)
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
+const CommandRoute = CommandRouteImport.update({
+  id: '/command',
+  path: '/command',
   getParentRoute: () => rootRouteImport,
 } as any)
-const StockSymbolRoute = StockSymbolRouteImport.update({
-  id: '/stock/$symbol',
-  path: '/stock/$symbol',
+const ForgotPasswordRoute = ForgotPasswordRouteImport.update({
+  id: '/forgot-password',
+  path: '/forgot-password',
   getParentRoute: () => rootRouteImport,
 } as any)
-const LegalTermsRoute = LegalTermsRouteImport.update({
-  id: '/legal/terms',
-  path: '/legal/terms',
+const HistoryRoute = HistoryRouteImport.update({
+  id: '/history',
+  path: '/history',
   getParentRoute: () => rootRouteImport,
 } as any)
-const LegalRiskDisclosureRoute = LegalRiskDisclosureRouteImport.update({
-  id: '/legal/risk-disclosure',
-  path: '/legal/risk-disclosure',
+const HomeRoute = HomeRouteImport.update({
+  id: '/home',
+  path: '/home',
   getParentRoute: () => rootRouteImport,
 } as any)
-const LegalPrivacyRoute = LegalPrivacyRouteImport.update({
-  id: '/legal/privacy',
-  path: '/legal/privacy',
+const KycRoute = KycRouteImport.update({
+  id: '/kyc',
+  path: '/kyc',
   getParentRoute: () => rootRouteImport,
 } as any)
-const GuidesDividendTrackingRoute = GuidesDividendTrackingRouteImport.update({
-  id: '/guides/dividend-tracking',
-  path: '/guides/dividend-tracking',
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiWithdrawRequestRoute = ApiWithdrawRequestRouteImport.update({
-  id: '/api/withdraw-request',
-  path: '/api/withdraw-request',
+const MarketsRoute = MarketsRouteImport.update({
+  id: '/markets',
+  path: '/markets',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiWithdrawApproveRoute = ApiWithdrawApproveRouteImport.update({
-  id: '/api/withdraw-approve',
-  path: '/api/withdraw-approve',
+const McpRoute = McpRouteImport.update({
+  id: '/mcp',
+  path: '/mcp',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiWalletInvestRoute = ApiWalletInvestRouteImport.update({
-  id: '/api/wallet-invest',
-  path: '/api/wallet-invest',
+const NavigatorRoute = NavigatorRouteImport.update({
+  id: '/navigator',
+  path: '/navigator',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiTradeRoute = ApiTradeRouteImport.update({
-  id: '/api/trade',
-  path: '/api/trade',
+const OrdersRoute = OrdersRouteImport.update({
+  id: '/orders',
+  path: '/orders',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiQuoteRoute = ApiQuoteRouteImport.update({
-  id: '/api/quote',
-  path: '/api/quote',
+const PocketRoute = PocketRouteImport.update({
+  id: '/pocket',
+  path: '/pocket',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiMpesaStkRoute = ApiMpesaStkRouteImport.update({
-  id: '/api/mpesa-stk',
-  path: '/api/mpesa-stk',
+const PoolsRoute = PoolsRouteImport.update({
+  id: '/pools',
+  path: '/pools',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiMpesaStatusRoute = ApiMpesaStatusRouteImport.update({
-  id: '/api/mpesa-status',
-  path: '/api/mpesa-status',
+const PortfolioRoute = PortfolioRouteImport.update({
+  id: '/portfolio',
+  path: '/portfolio',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiMpesaCallbackRoute = ApiMpesaCallbackRouteImport.update({
-  id: '/api/mpesa-callback',
-  path: '/api/mpesa-callback',
+const ProfileRoute = ProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiMpesaB2cResultRoute = ApiMpesaB2cResultRouteImport.update({
-  id: '/api/mpesa-b2c-result',
-  path: '/api/mpesa-b2c-result',
+const QuickRoute = QuickRouteImport.update({
+  id: '/quick',
+  path: '/quick',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiFeesRoute = ApiFeesRouteImport.update({
-  id: '/api/fees',
-  path: '/api/fees',
+const ResetPasswordRoute = ResetPasswordRouteImport.update({
+  id: '/reset-password',
+  path: '/reset-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SignupRoute = SignupRouteImport.update({
+  id: '/signup',
+  path: '/signup',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
+  id: '/sitemap.xml',
+  path: '/sitemap.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TradeRoute = TradeRouteImport.update({
+  id: '/trade',
+  path: '/trade',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const Char91DotmcpChar93ListToolsRoute =
+  Char91DotmcpChar93ListToolsRouteImport.update({
+    id: '/.mcp/list-tools',
+    path: '/.mcp/list-tools',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const Char91DotwellKnownChar93OauthProtectedResourceRoute =
+  Char91DotwellKnownChar93OauthProtectedResourceRouteImport.update({
+    id: '/.well-known/oauth-protected-resource',
+    path: '/.well-known/oauth-protected-resource',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const AdminKycRoute = AdminKycRouteImport.update({
+  id: '/kyc',
+  path: '/kyc',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminTransactionsRoute = AdminTransactionsRouteImport.update({
+  id: '/transactions',
+  path: '/transactions',
+  getParentRoute: () => AdminRoute,
+} as any)
+const ApiAdminResolveDepositRoute = ApiAdminResolveDepositRouteImport.update({
+  id: '/api/admin-resolve-deposit',
+  path: '/api/admin-resolve-deposit',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiCandlesRoute = ApiCandlesRouteImport.update({
@@ -221,37 +202,94 @@ const ApiCandlesRoute = ApiCandlesRouteImport.update({
   path: '/api/candles',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AdminTransactionsRoute = AdminTransactionsRouteImport.update({
-  id: '/transactions',
-  path: '/transactions',
-  getParentRoute: () => AdminRoute,
+const ApiCapabilitiesRoute = ApiCapabilitiesRouteImport.update({
+  id: '/api/capabilities',
+  path: '/api/capabilities',
+  getParentRoute: () => rootRouteImport,
 } as any)
-const AdminKycRoute = AdminKycRouteImport.update({
-  id: '/kyc',
-  path: '/kyc',
-  getParentRoute: () => AdminRoute,
+const ApiFeesRoute = ApiFeesRouteImport.update({
+  id: '/api/fees',
+  path: '/api/fees',
+  getParentRoute: () => rootRouteImport,
 } as any)
-const Char91DotwellKnownChar93OauthProtectedResourceRoute =
-  Char91DotwellKnownChar93OauthProtectedResourceRouteImport.update({
-    id: '/.well-known/oauth-protected-resource',
-    path: '/.well-known/oauth-protected-resource',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const Char91DotmcpChar93ListToolsRoute =
-  Char91DotmcpChar93ListToolsRouteImport.update({
-    id: '/.mcp/list-tools',
-    path: '/.mcp/list-tools',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ApiPublicCheckPriceAlertsRoute =
-  ApiPublicCheckPriceAlertsRouteImport.update({
-    id: '/api/public/check-price-alerts',
-    path: '/api/public/check-price-alerts',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ApiPublicAmlScanRoute = ApiPublicAmlScanRouteImport.update({
-  id: '/api/public/aml-scan',
-  path: '/api/public/aml-scan',
+const ApiMoneyConfigRoute = ApiMoneyConfigRouteImport.update({
+  id: '/api/money-config',
+  path: '/api/money-config',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiMpesaB2cResultRoute = ApiMpesaB2cResultRouteImport.update({
+  id: '/api/mpesa-b2c-result',
+  path: '/api/mpesa-b2c-result',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiMpesaB2cTimeoutRoute = ApiMpesaB2cTimeoutRouteImport.update({
+  id: '/api/mpesa-b2c-timeout',
+  path: '/api/mpesa-b2c-timeout',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiMpesaCallbackRoute = ApiMpesaCallbackRouteImport.update({
+  id: '/api/mpesa-callback',
+  path: '/api/mpesa-callback',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiMpesaStatusRoute = ApiMpesaStatusRouteImport.update({
+  id: '/api/mpesa-status',
+  path: '/api/mpesa-status',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiMpesaStkRoute = ApiMpesaStkRouteImport.update({
+  id: '/api/mpesa-stk',
+  path: '/api/mpesa-stk',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiQuoteRoute = ApiQuoteRouteImport.update({
+  id: '/api/quote',
+  path: '/api/quote',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiTradeRoute = ApiTradeRouteImport.update({
+  id: '/api/trade',
+  path: '/api/trade',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiWalletInvestRoute = ApiWalletInvestRouteImport.update({
+  id: '/api/wallet-invest',
+  path: '/api/wallet-invest',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiWithdrawApproveRoute = ApiWithdrawApproveRouteImport.update({
+  id: '/api/withdraw-approve',
+  path: '/api/withdraw-approve',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiWithdrawRequestRoute = ApiWithdrawRequestRouteImport.update({
+  id: '/api/withdraw-request',
+  path: '/api/withdraw-request',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GuidesDividendTrackingRoute = GuidesDividendTrackingRouteImport.update({
+  id: '/guides/dividend-tracking',
+  path: '/guides/dividend-tracking',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LegalPrivacyRoute = LegalPrivacyRouteImport.update({
+  id: '/legal/privacy',
+  path: '/legal/privacy',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LegalRiskDisclosureRoute = LegalRiskDisclosureRouteImport.update({
+  id: '/legal/risk-disclosure',
+  path: '/legal/risk-disclosure',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LegalTermsRoute = LegalTermsRouteImport.update({
+  id: '/legal/terms',
+  path: '/legal/terms',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const StockSymbolRoute = StockSymbolRouteImport.update({
+  id: '/stock/$symbol',
+  path: '/stock/$symbol',
   getParentRoute: () => rootRouteImport,
 } as any)
 const Char91DotmcpChar93InvokeToolToolRoute =
@@ -260,10 +298,29 @@ const Char91DotmcpChar93InvokeToolToolRoute =
     path: '/.mcp/invoke-tool/$tool',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicAmlScanRoute = ApiPublicAmlScanRouteImport.update({
+  id: '/api/public/aml-scan',
+  path: '/api/public/aml-scan',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicCheckPriceAlertsRoute =
+  ApiPublicCheckPriceAlertsRouteImport.update({
+    id: '/api/public/check-price-alerts',
+    path: '/api/public/check-price-alerts',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicReconcileDepositsRoute =
+  ApiPublicReconcileDepositsRouteImport.update({
+    id: '/api/public/reconcile-deposits',
+    path: '/api/public/reconcile-deposits',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/account': typeof AccountRoute
   '/admin': typeof AdminRouteWithChildren
+  '/command': typeof CommandRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/history': typeof HistoryRoute
   '/home': typeof HomeRoute
@@ -273,9 +330,11 @@ export interface FileRoutesByFullPath {
   '/mcp': typeof McpRoute
   '/navigator': typeof NavigatorRoute
   '/orders': typeof OrdersRoute
+  '/pocket': typeof PocketRoute
   '/pools': typeof PoolsRoute
   '/portfolio': typeof PortfolioRoute
   '/profile': typeof ProfileRoute
+  '/quick': typeof QuickRoute
   '/reset-password': typeof ResetPasswordRoute
   '/signup': typeof SignupRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
@@ -284,9 +343,13 @@ export interface FileRoutesByFullPath {
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/admin/kyc': typeof AdminKycRoute
   '/admin/transactions': typeof AdminTransactionsRoute
+  '/api/admin-resolve-deposit': typeof ApiAdminResolveDepositRoute
   '/api/candles': typeof ApiCandlesRoute
+  '/api/capabilities': typeof ApiCapabilitiesRoute
   '/api/fees': typeof ApiFeesRoute
+  '/api/money-config': typeof ApiMoneyConfigRoute
   '/api/mpesa-b2c-result': typeof ApiMpesaB2cResultRoute
+  '/api/mpesa-b2c-timeout': typeof ApiMpesaB2cTimeoutRoute
   '/api/mpesa-callback': typeof ApiMpesaCallbackRoute
   '/api/mpesa-status': typeof ApiMpesaStatusRoute
   '/api/mpesa-stk': typeof ApiMpesaStkRoute
@@ -303,10 +366,13 @@ export interface FileRoutesByFullPath {
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/api/public/aml-scan': typeof ApiPublicAmlScanRoute
   '/api/public/check-price-alerts': typeof ApiPublicCheckPriceAlertsRoute
+  '/api/public/reconcile-deposits': typeof ApiPublicReconcileDepositsRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/account': typeof AccountRoute
   '/admin': typeof AdminRouteWithChildren
+  '/command': typeof CommandRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/history': typeof HistoryRoute
   '/home': typeof HomeRoute
@@ -316,9 +382,11 @@ export interface FileRoutesByTo {
   '/mcp': typeof McpRoute
   '/navigator': typeof NavigatorRoute
   '/orders': typeof OrdersRoute
+  '/pocket': typeof PocketRoute
   '/pools': typeof PoolsRoute
   '/portfolio': typeof PortfolioRoute
   '/profile': typeof ProfileRoute
+  '/quick': typeof QuickRoute
   '/reset-password': typeof ResetPasswordRoute
   '/signup': typeof SignupRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
@@ -327,9 +395,13 @@ export interface FileRoutesByTo {
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/admin/kyc': typeof AdminKycRoute
   '/admin/transactions': typeof AdminTransactionsRoute
+  '/api/admin-resolve-deposit': typeof ApiAdminResolveDepositRoute
   '/api/candles': typeof ApiCandlesRoute
+  '/api/capabilities': typeof ApiCapabilitiesRoute
   '/api/fees': typeof ApiFeesRoute
+  '/api/money-config': typeof ApiMoneyConfigRoute
   '/api/mpesa-b2c-result': typeof ApiMpesaB2cResultRoute
+  '/api/mpesa-b2c-timeout': typeof ApiMpesaB2cTimeoutRoute
   '/api/mpesa-callback': typeof ApiMpesaCallbackRoute
   '/api/mpesa-status': typeof ApiMpesaStatusRoute
   '/api/mpesa-stk': typeof ApiMpesaStkRoute
@@ -346,11 +418,14 @@ export interface FileRoutesByTo {
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/api/public/aml-scan': typeof ApiPublicAmlScanRoute
   '/api/public/check-price-alerts': typeof ApiPublicCheckPriceAlertsRoute
+  '/api/public/reconcile-deposits': typeof ApiPublicReconcileDepositsRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/account': typeof AccountRoute
   '/admin': typeof AdminRouteWithChildren
+  '/command': typeof CommandRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/history': typeof HistoryRoute
   '/home': typeof HomeRoute
@@ -360,9 +435,11 @@ export interface FileRoutesById {
   '/mcp': typeof McpRoute
   '/navigator': typeof NavigatorRoute
   '/orders': typeof OrdersRoute
+  '/pocket': typeof PocketRoute
   '/pools': typeof PoolsRoute
   '/portfolio': typeof PortfolioRoute
   '/profile': typeof ProfileRoute
+  '/quick': typeof QuickRoute
   '/reset-password': typeof ResetPasswordRoute
   '/signup': typeof SignupRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
@@ -371,9 +448,13 @@ export interface FileRoutesById {
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/admin/kyc': typeof AdminKycRoute
   '/admin/transactions': typeof AdminTransactionsRoute
+  '/api/admin-resolve-deposit': typeof ApiAdminResolveDepositRoute
   '/api/candles': typeof ApiCandlesRoute
+  '/api/capabilities': typeof ApiCapabilitiesRoute
   '/api/fees': typeof ApiFeesRoute
+  '/api/money-config': typeof ApiMoneyConfigRoute
   '/api/mpesa-b2c-result': typeof ApiMpesaB2cResultRoute
+  '/api/mpesa-b2c-timeout': typeof ApiMpesaB2cTimeoutRoute
   '/api/mpesa-callback': typeof ApiMpesaCallbackRoute
   '/api/mpesa-status': typeof ApiMpesaStatusRoute
   '/api/mpesa-stk': typeof ApiMpesaStkRoute
@@ -390,12 +471,15 @@ export interface FileRoutesById {
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/api/public/aml-scan': typeof ApiPublicAmlScanRoute
   '/api/public/check-price-alerts': typeof ApiPublicCheckPriceAlertsRoute
+  '/api/public/reconcile-deposits': typeof ApiPublicReconcileDepositsRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/account'
     | '/admin'
+    | '/command'
     | '/forgot-password'
     | '/history'
     | '/home'
@@ -405,9 +489,11 @@ export interface FileRouteTypes {
     | '/mcp'
     | '/navigator'
     | '/orders'
+    | '/pocket'
     | '/pools'
     | '/portfolio'
     | '/profile'
+    | '/quick'
     | '/reset-password'
     | '/signup'
     | '/sitemap.xml'
@@ -416,9 +502,13 @@ export interface FileRouteTypes {
     | '/.well-known/oauth-protected-resource'
     | '/admin/kyc'
     | '/admin/transactions'
+    | '/api/admin-resolve-deposit'
     | '/api/candles'
+    | '/api/capabilities'
     | '/api/fees'
+    | '/api/money-config'
     | '/api/mpesa-b2c-result'
+    | '/api/mpesa-b2c-timeout'
     | '/api/mpesa-callback'
     | '/api/mpesa-status'
     | '/api/mpesa-stk'
@@ -435,10 +525,13 @@ export interface FileRouteTypes {
     | '/.mcp/invoke-tool/$tool'
     | '/api/public/aml-scan'
     | '/api/public/check-price-alerts'
+    | '/api/public/reconcile-deposits'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/account'
     | '/admin'
+    | '/command'
     | '/forgot-password'
     | '/history'
     | '/home'
@@ -448,9 +541,11 @@ export interface FileRouteTypes {
     | '/mcp'
     | '/navigator'
     | '/orders'
+    | '/pocket'
     | '/pools'
     | '/portfolio'
     | '/profile'
+    | '/quick'
     | '/reset-password'
     | '/signup'
     | '/sitemap.xml'
@@ -459,9 +554,13 @@ export interface FileRouteTypes {
     | '/.well-known/oauth-protected-resource'
     | '/admin/kyc'
     | '/admin/transactions'
+    | '/api/admin-resolve-deposit'
     | '/api/candles'
+    | '/api/capabilities'
     | '/api/fees'
+    | '/api/money-config'
     | '/api/mpesa-b2c-result'
+    | '/api/mpesa-b2c-timeout'
     | '/api/mpesa-callback'
     | '/api/mpesa-status'
     | '/api/mpesa-stk'
@@ -478,10 +577,13 @@ export interface FileRouteTypes {
     | '/.mcp/invoke-tool/$tool'
     | '/api/public/aml-scan'
     | '/api/public/check-price-alerts'
+    | '/api/public/reconcile-deposits'
   id:
     | '__root__'
     | '/'
+    | '/account'
     | '/admin'
+    | '/command'
     | '/forgot-password'
     | '/history'
     | '/home'
@@ -491,9 +593,11 @@ export interface FileRouteTypes {
     | '/mcp'
     | '/navigator'
     | '/orders'
+    | '/pocket'
     | '/pools'
     | '/portfolio'
     | '/profile'
+    | '/quick'
     | '/reset-password'
     | '/signup'
     | '/sitemap.xml'
@@ -502,9 +606,13 @@ export interface FileRouteTypes {
     | '/.well-known/oauth-protected-resource'
     | '/admin/kyc'
     | '/admin/transactions'
+    | '/api/admin-resolve-deposit'
     | '/api/candles'
+    | '/api/capabilities'
     | '/api/fees'
+    | '/api/money-config'
     | '/api/mpesa-b2c-result'
+    | '/api/mpesa-b2c-timeout'
     | '/api/mpesa-callback'
     | '/api/mpesa-status'
     | '/api/mpesa-stk'
@@ -521,11 +629,14 @@ export interface FileRouteTypes {
     | '/.mcp/invoke-tool/$tool'
     | '/api/public/aml-scan'
     | '/api/public/check-price-alerts'
+    | '/api/public/reconcile-deposits'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AccountRoute: typeof AccountRoute
   AdminRoute: typeof AdminRouteWithChildren
+  CommandRoute: typeof CommandRoute
   ForgotPasswordRoute: typeof ForgotPasswordRoute
   HistoryRoute: typeof HistoryRoute
   HomeRoute: typeof HomeRoute
@@ -535,18 +646,24 @@ export interface RootRouteChildren {
   McpRoute: typeof McpRoute
   NavigatorRoute: typeof NavigatorRoute
   OrdersRoute: typeof OrdersRoute
+  PocketRoute: typeof PocketRoute
   PoolsRoute: typeof PoolsRoute
   PortfolioRoute: typeof PortfolioRoute
   ProfileRoute: typeof ProfileRoute
+  QuickRoute: typeof QuickRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
   SignupRoute: typeof SignupRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   TradeRoute: typeof TradeRoute
   Char91DotmcpChar93ListToolsRoute: typeof Char91DotmcpChar93ListToolsRoute
   Char91DotwellKnownChar93OauthProtectedResourceRoute: typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
+  ApiAdminResolveDepositRoute: typeof ApiAdminResolveDepositRoute
   ApiCandlesRoute: typeof ApiCandlesRoute
+  ApiCapabilitiesRoute: typeof ApiCapabilitiesRoute
   ApiFeesRoute: typeof ApiFeesRoute
+  ApiMoneyConfigRoute: typeof ApiMoneyConfigRoute
   ApiMpesaB2cResultRoute: typeof ApiMpesaB2cResultRoute
+  ApiMpesaB2cTimeoutRoute: typeof ApiMpesaB2cTimeoutRoute
   ApiMpesaCallbackRoute: typeof ApiMpesaCallbackRoute
   ApiMpesaStatusRoute: typeof ApiMpesaStatusRoute
   ApiMpesaStkRoute: typeof ApiMpesaStkRoute
@@ -563,120 +680,23 @@ export interface RootRouteChildren {
   Char91DotmcpChar93InvokeToolToolRoute: typeof Char91DotmcpChar93InvokeToolToolRoute
   ApiPublicAmlScanRoute: typeof ApiPublicAmlScanRoute
   ApiPublicCheckPriceAlertsRoute: typeof ApiPublicCheckPriceAlertsRoute
+  ApiPublicReconcileDepositsRoute: typeof ApiPublicReconcileDepositsRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/trade': {
-      id: '/trade'
-      path: '/trade'
-      fullPath: '/trade'
-      preLoaderRoute: typeof TradeRouteImport
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/sitemap.xml': {
-      id: '/sitemap.xml'
-      path: '/sitemap.xml'
-      fullPath: '/sitemap.xml'
-      preLoaderRoute: typeof SitemapDotxmlRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/signup': {
-      id: '/signup'
-      path: '/signup'
-      fullPath: '/signup'
-      preLoaderRoute: typeof SignupRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/reset-password': {
-      id: '/reset-password'
-      path: '/reset-password'
-      fullPath: '/reset-password'
-      preLoaderRoute: typeof ResetPasswordRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/profile': {
-      id: '/profile'
-      path: '/profile'
-      fullPath: '/profile'
-      preLoaderRoute: typeof ProfileRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/portfolio': {
-      id: '/portfolio'
-      path: '/portfolio'
-      fullPath: '/portfolio'
-      preLoaderRoute: typeof PortfolioRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/pools': {
-      id: '/pools'
-      path: '/pools'
-      fullPath: '/pools'
-      preLoaderRoute: typeof PoolsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/orders': {
-      id: '/orders'
-      path: '/orders'
-      fullPath: '/orders'
-      preLoaderRoute: typeof OrdersRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/navigator': {
-      id: '/navigator'
-      path: '/navigator'
-      fullPath: '/navigator'
-      preLoaderRoute: typeof NavigatorRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/mcp': {
-      id: '/mcp'
-      path: '/mcp'
-      fullPath: '/mcp'
-      preLoaderRoute: typeof McpRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/markets': {
-      id: '/markets'
-      path: '/markets'
-      fullPath: '/markets'
-      preLoaderRoute: typeof MarketsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/login': {
-      id: '/login'
-      path: '/login'
-      fullPath: '/login'
-      preLoaderRoute: typeof LoginRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/kyc': {
-      id: '/kyc'
-      path: '/kyc'
-      fullPath: '/kyc'
-      preLoaderRoute: typeof KycRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/home': {
-      id: '/home'
-      path: '/home'
-      fullPath: '/home'
-      preLoaderRoute: typeof HomeRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/history': {
-      id: '/history'
-      path: '/history'
-      fullPath: '/history'
-      preLoaderRoute: typeof HistoryRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/forgot-password': {
-      id: '/forgot-password'
-      path: '/forgot-password'
-      fullPath: '/forgot-password'
-      preLoaderRoute: typeof ForgotPasswordRouteImport
+    '/account': {
+      id: '/account'
+      path: '/account'
+      fullPath: '/account'
+      preLoaderRoute: typeof AccountRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin': {
@@ -686,144 +706,137 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
+    '/command': {
+      id: '/command'
+      path: '/command'
+      fullPath: '/command'
+      preLoaderRoute: typeof CommandRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/stock/$symbol': {
-      id: '/stock/$symbol'
-      path: '/stock/$symbol'
-      fullPath: '/stock/$symbol'
-      preLoaderRoute: typeof StockSymbolRouteImport
+    '/forgot-password': {
+      id: '/forgot-password'
+      path: '/forgot-password'
+      fullPath: '/forgot-password'
+      preLoaderRoute: typeof ForgotPasswordRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/legal/terms': {
-      id: '/legal/terms'
-      path: '/legal/terms'
-      fullPath: '/legal/terms'
-      preLoaderRoute: typeof LegalTermsRouteImport
+    '/history': {
+      id: '/history'
+      path: '/history'
+      fullPath: '/history'
+      preLoaderRoute: typeof HistoryRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/legal/risk-disclosure': {
-      id: '/legal/risk-disclosure'
-      path: '/legal/risk-disclosure'
-      fullPath: '/legal/risk-disclosure'
-      preLoaderRoute: typeof LegalRiskDisclosureRouteImport
+    '/home': {
+      id: '/home'
+      path: '/home'
+      fullPath: '/home'
+      preLoaderRoute: typeof HomeRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/legal/privacy': {
-      id: '/legal/privacy'
-      path: '/legal/privacy'
-      fullPath: '/legal/privacy'
-      preLoaderRoute: typeof LegalPrivacyRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/guides/dividend-tracking': {
-      id: '/guides/dividend-tracking'
-      path: '/guides/dividend-tracking'
-      fullPath: '/guides/dividend-tracking'
-      preLoaderRoute: typeof GuidesDividendTrackingRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/withdraw-request': {
-      id: '/api/withdraw-request'
-      path: '/api/withdraw-request'
-      fullPath: '/api/withdraw-request'
-      preLoaderRoute: typeof ApiWithdrawRequestRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/withdraw-approve': {
-      id: '/api/withdraw-approve'
-      path: '/api/withdraw-approve'
-      fullPath: '/api/withdraw-approve'
-      preLoaderRoute: typeof ApiWithdrawApproveRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/wallet-invest': {
-      id: '/api/wallet-invest'
-      path: '/api/wallet-invest'
-      fullPath: '/api/wallet-invest'
-      preLoaderRoute: typeof ApiWalletInvestRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/trade': {
-      id: '/api/trade'
-      path: '/api/trade'
-      fullPath: '/api/trade'
-      preLoaderRoute: typeof ApiTradeRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/quote': {
-      id: '/api/quote'
-      path: '/api/quote'
-      fullPath: '/api/quote'
-      preLoaderRoute: typeof ApiQuoteRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/mpesa-stk': {
-      id: '/api/mpesa-stk'
-      path: '/api/mpesa-stk'
-      fullPath: '/api/mpesa-stk'
-      preLoaderRoute: typeof ApiMpesaStkRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/mpesa-status': {
-      id: '/api/mpesa-status'
-      path: '/api/mpesa-status'
-      fullPath: '/api/mpesa-status'
-      preLoaderRoute: typeof ApiMpesaStatusRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/mpesa-callback': {
-      id: '/api/mpesa-callback'
-      path: '/api/mpesa-callback'
-      fullPath: '/api/mpesa-callback'
-      preLoaderRoute: typeof ApiMpesaCallbackRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/mpesa-b2c-result': {
-      id: '/api/mpesa-b2c-result'
-      path: '/api/mpesa-b2c-result'
-      fullPath: '/api/mpesa-b2c-result'
-      preLoaderRoute: typeof ApiMpesaB2cResultRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/fees': {
-      id: '/api/fees'
-      path: '/api/fees'
-      fullPath: '/api/fees'
-      preLoaderRoute: typeof ApiFeesRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/candles': {
-      id: '/api/candles'
-      path: '/api/candles'
-      fullPath: '/api/candles'
-      preLoaderRoute: typeof ApiCandlesRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/admin/transactions': {
-      id: '/admin/transactions'
-      path: '/transactions'
-      fullPath: '/admin/transactions'
-      preLoaderRoute: typeof AdminTransactionsRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/kyc': {
-      id: '/admin/kyc'
+    '/kyc': {
+      id: '/kyc'
       path: '/kyc'
-      fullPath: '/admin/kyc'
-      preLoaderRoute: typeof AdminKycRouteImport
-      parentRoute: typeof AdminRoute
+      fullPath: '/kyc'
+      preLoaderRoute: typeof KycRouteImport
+      parentRoute: typeof rootRouteImport
     }
-    '/.well-known/oauth-protected-resource': {
-      id: '/.well-known/oauth-protected-resource'
-      path: '/.well-known/oauth-protected-resource'
-      fullPath: '/.well-known/oauth-protected-resource'
-      preLoaderRoute: typeof Char91DotwellKnownChar93OauthProtectedResourceRouteImport
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/markets': {
+      id: '/markets'
+      path: '/markets'
+      fullPath: '/markets'
+      preLoaderRoute: typeof MarketsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/mcp': {
+      id: '/mcp'
+      path: '/mcp'
+      fullPath: '/mcp'
+      preLoaderRoute: typeof McpRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/navigator': {
+      id: '/navigator'
+      path: '/navigator'
+      fullPath: '/navigator'
+      preLoaderRoute: typeof NavigatorRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/orders': {
+      id: '/orders'
+      path: '/orders'
+      fullPath: '/orders'
+      preLoaderRoute: typeof OrdersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/pocket': {
+      id: '/pocket'
+      path: '/pocket'
+      fullPath: '/pocket'
+      preLoaderRoute: typeof PocketRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/pools': {
+      id: '/pools'
+      path: '/pools'
+      fullPath: '/pools'
+      preLoaderRoute: typeof PoolsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/portfolio': {
+      id: '/portfolio'
+      path: '/portfolio'
+      fullPath: '/portfolio'
+      preLoaderRoute: typeof PortfolioRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/profile': {
+      id: '/profile'
+      path: '/profile'
+      fullPath: '/profile'
+      preLoaderRoute: typeof ProfileRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/quick': {
+      id: '/quick'
+      path: '/quick'
+      fullPath: '/quick'
+      preLoaderRoute: typeof QuickRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/reset-password': {
+      id: '/reset-password'
+      path: '/reset-password'
+      fullPath: '/reset-password'
+      preLoaderRoute: typeof ResetPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/signup': {
+      id: '/signup'
+      path: '/signup'
+      fullPath: '/signup'
+      preLoaderRoute: typeof SignupRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/trade': {
+      id: '/trade'
+      path: '/trade'
+      fullPath: '/trade'
+      preLoaderRoute: typeof TradeRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/.mcp/list-tools': {
@@ -833,11 +846,172 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof Char91DotmcpChar93ListToolsRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/public/check-price-alerts': {
-      id: '/api/public/check-price-alerts'
-      path: '/api/public/check-price-alerts'
-      fullPath: '/api/public/check-price-alerts'
-      preLoaderRoute: typeof ApiPublicCheckPriceAlertsRouteImport
+    '/.well-known/oauth-protected-resource': {
+      id: '/.well-known/oauth-protected-resource'
+      path: '/.well-known/oauth-protected-resource'
+      fullPath: '/.well-known/oauth-protected-resource'
+      preLoaderRoute: typeof Char91DotwellKnownChar93OauthProtectedResourceRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/kyc': {
+      id: '/admin/kyc'
+      path: '/kyc'
+      fullPath: '/admin/kyc'
+      preLoaderRoute: typeof AdminKycRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/transactions': {
+      id: '/admin/transactions'
+      path: '/transactions'
+      fullPath: '/admin/transactions'
+      preLoaderRoute: typeof AdminTransactionsRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/api/admin-resolve-deposit': {
+      id: '/api/admin-resolve-deposit'
+      path: '/api/admin-resolve-deposit'
+      fullPath: '/api/admin-resolve-deposit'
+      preLoaderRoute: typeof ApiAdminResolveDepositRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/candles': {
+      id: '/api/candles'
+      path: '/api/candles'
+      fullPath: '/api/candles'
+      preLoaderRoute: typeof ApiCandlesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/capabilities': {
+      id: '/api/capabilities'
+      path: '/api/capabilities'
+      fullPath: '/api/capabilities'
+      preLoaderRoute: typeof ApiCapabilitiesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/fees': {
+      id: '/api/fees'
+      path: '/api/fees'
+      fullPath: '/api/fees'
+      preLoaderRoute: typeof ApiFeesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/money-config': {
+      id: '/api/money-config'
+      path: '/api/money-config'
+      fullPath: '/api/money-config'
+      preLoaderRoute: typeof ApiMoneyConfigRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/mpesa-b2c-result': {
+      id: '/api/mpesa-b2c-result'
+      path: '/api/mpesa-b2c-result'
+      fullPath: '/api/mpesa-b2c-result'
+      preLoaderRoute: typeof ApiMpesaB2cResultRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/mpesa-b2c-timeout': {
+      id: '/api/mpesa-b2c-timeout'
+      path: '/api/mpesa-b2c-timeout'
+      fullPath: '/api/mpesa-b2c-timeout'
+      preLoaderRoute: typeof ApiMpesaB2cTimeoutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/mpesa-callback': {
+      id: '/api/mpesa-callback'
+      path: '/api/mpesa-callback'
+      fullPath: '/api/mpesa-callback'
+      preLoaderRoute: typeof ApiMpesaCallbackRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/mpesa-status': {
+      id: '/api/mpesa-status'
+      path: '/api/mpesa-status'
+      fullPath: '/api/mpesa-status'
+      preLoaderRoute: typeof ApiMpesaStatusRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/mpesa-stk': {
+      id: '/api/mpesa-stk'
+      path: '/api/mpesa-stk'
+      fullPath: '/api/mpesa-stk'
+      preLoaderRoute: typeof ApiMpesaStkRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/quote': {
+      id: '/api/quote'
+      path: '/api/quote'
+      fullPath: '/api/quote'
+      preLoaderRoute: typeof ApiQuoteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/trade': {
+      id: '/api/trade'
+      path: '/api/trade'
+      fullPath: '/api/trade'
+      preLoaderRoute: typeof ApiTradeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/wallet-invest': {
+      id: '/api/wallet-invest'
+      path: '/api/wallet-invest'
+      fullPath: '/api/wallet-invest'
+      preLoaderRoute: typeof ApiWalletInvestRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/withdraw-approve': {
+      id: '/api/withdraw-approve'
+      path: '/api/withdraw-approve'
+      fullPath: '/api/withdraw-approve'
+      preLoaderRoute: typeof ApiWithdrawApproveRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/withdraw-request': {
+      id: '/api/withdraw-request'
+      path: '/api/withdraw-request'
+      fullPath: '/api/withdraw-request'
+      preLoaderRoute: typeof ApiWithdrawRequestRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/guides/dividend-tracking': {
+      id: '/guides/dividend-tracking'
+      path: '/guides/dividend-tracking'
+      fullPath: '/guides/dividend-tracking'
+      preLoaderRoute: typeof GuidesDividendTrackingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/legal/privacy': {
+      id: '/legal/privacy'
+      path: '/legal/privacy'
+      fullPath: '/legal/privacy'
+      preLoaderRoute: typeof LegalPrivacyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/legal/risk-disclosure': {
+      id: '/legal/risk-disclosure'
+      path: '/legal/risk-disclosure'
+      fullPath: '/legal/risk-disclosure'
+      preLoaderRoute: typeof LegalRiskDisclosureRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/legal/terms': {
+      id: '/legal/terms'
+      path: '/legal/terms'
+      fullPath: '/legal/terms'
+      preLoaderRoute: typeof LegalTermsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/stock/$symbol': {
+      id: '/stock/$symbol'
+      path: '/stock/$symbol'
+      fullPath: '/stock/$symbol'
+      preLoaderRoute: typeof StockSymbolRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/.mcp/invoke-tool/$tool': {
+      id: '/.mcp/invoke-tool/$tool'
+      path: '/.mcp/invoke-tool/$tool'
+      fullPath: '/.mcp/invoke-tool/$tool'
+      preLoaderRoute: typeof Char91DotmcpChar93InvokeToolToolRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/public/aml-scan': {
@@ -847,11 +1021,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicAmlScanRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/.mcp/invoke-tool/$tool': {
-      id: '/.mcp/invoke-tool/$tool'
-      path: '/.mcp/invoke-tool/$tool'
-      fullPath: '/.mcp/invoke-tool/$tool'
-      preLoaderRoute: typeof Char91DotmcpChar93InvokeToolToolRouteImport
+    '/api/public/check-price-alerts': {
+      id: '/api/public/check-price-alerts'
+      path: '/api/public/check-price-alerts'
+      fullPath: '/api/public/check-price-alerts'
+      preLoaderRoute: typeof ApiPublicCheckPriceAlertsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/reconcile-deposits': {
+      id: '/api/public/reconcile-deposits'
+      path: '/api/public/reconcile-deposits'
+      fullPath: '/api/public/reconcile-deposits'
+      preLoaderRoute: typeof ApiPublicReconcileDepositsRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
@@ -871,7 +1052,9 @@ const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AccountRoute: AccountRoute,
   AdminRoute: AdminRouteWithChildren,
+  CommandRoute: CommandRoute,
   ForgotPasswordRoute: ForgotPasswordRoute,
   HistoryRoute: HistoryRoute,
   HomeRoute: HomeRoute,
@@ -881,9 +1064,11 @@ const rootRouteChildren: RootRouteChildren = {
   McpRoute: McpRoute,
   NavigatorRoute: NavigatorRoute,
   OrdersRoute: OrdersRoute,
+  PocketRoute: PocketRoute,
   PoolsRoute: PoolsRoute,
   PortfolioRoute: PortfolioRoute,
   ProfileRoute: ProfileRoute,
+  QuickRoute: QuickRoute,
   ResetPasswordRoute: ResetPasswordRoute,
   SignupRoute: SignupRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
@@ -891,9 +1076,13 @@ const rootRouteChildren: RootRouteChildren = {
   Char91DotmcpChar93ListToolsRoute: Char91DotmcpChar93ListToolsRoute,
   Char91DotwellKnownChar93OauthProtectedResourceRoute:
     Char91DotwellKnownChar93OauthProtectedResourceRoute,
+  ApiAdminResolveDepositRoute: ApiAdminResolveDepositRoute,
   ApiCandlesRoute: ApiCandlesRoute,
+  ApiCapabilitiesRoute: ApiCapabilitiesRoute,
   ApiFeesRoute: ApiFeesRoute,
+  ApiMoneyConfigRoute: ApiMoneyConfigRoute,
   ApiMpesaB2cResultRoute: ApiMpesaB2cResultRoute,
+  ApiMpesaB2cTimeoutRoute: ApiMpesaB2cTimeoutRoute,
   ApiMpesaCallbackRoute: ApiMpesaCallbackRoute,
   ApiMpesaStatusRoute: ApiMpesaStatusRoute,
   ApiMpesaStkRoute: ApiMpesaStkRoute,
@@ -910,6 +1099,7 @@ const rootRouteChildren: RootRouteChildren = {
   Char91DotmcpChar93InvokeToolToolRoute: Char91DotmcpChar93InvokeToolToolRoute,
   ApiPublicAmlScanRoute: ApiPublicAmlScanRoute,
   ApiPublicCheckPriceAlertsRoute: ApiPublicCheckPriceAlertsRoute,
+  ApiPublicReconcileDepositsRoute: ApiPublicReconcileDepositsRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

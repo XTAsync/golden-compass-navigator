@@ -7,6 +7,7 @@ import { Sparkline } from "@/components/Sparkline";
 import { TiltCard } from "@/components/TiltCard";
 import { NotificationBell } from "@/components/NotificationBell";
 import { WithdrawModal } from "@/components/WithdrawModal";
+import { useAccountSummary } from "@/hooks/useAccountSummary";
 import { WalletDepositModal } from "@/components/WalletDepositModal";
 
 export const Route = createFileRoute("/home")({
@@ -45,6 +46,7 @@ const KES = (n: number) =>
 function HomePage() {
   const { user, loading: authLoading } = useAuth();
   const navigate = useNavigate();
+  const account = useAccountSummary();
   const [loading, setLoading] = useState(true);
   const [investments, setInvestments] = useState<InvestmentRow[]>([]);
   const [fullName, setFullName] = useState("Investor");
@@ -278,15 +280,12 @@ function HomePage() {
       </section>
       {withdrawTarget && (
         <WithdrawModal
-          holding={{
-            pool_id: withdrawTarget.pool_id,
-            pool_name: withdrawTarget.investment_pools?.name ?? "Pool",
-            current_value: Number(withdrawTarget.current_value ?? 0),
-            exit_fee_percent: Number(withdrawTarget.investment_pools?.exit_fee_percent ?? 0),
-            holding_period_days: Number(withdrawTarget.investment_pools?.holding_period_days ?? 0),
-          }}
+          wallet={account.wallet}
+          phone={account.phone}
+          holdings={account.poolHoldings}
+          initialSource={withdrawTarget.pool_id}
           onClose={() => setWithdrawTarget(null)}
-          onSuccess={() => setReloadTick((t) => t + 1)}
+          onSuccess={() => { account.refresh(); setReloadTick((t) => t + 1); }}
         />
       )}
       {showDeposit && (

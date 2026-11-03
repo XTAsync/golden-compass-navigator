@@ -8,6 +8,8 @@ import { DepositModal } from "@/components/DepositModal";
 export const Route = createFileRoute("/pools")({
   head: () => ({
     meta: [
+      { name: "twitter:card", content: "summary" },
+      { property: "og:type", content: "website" },
       { title: "Investment Pools — Golden Compass" },
       { name: "description", content: "Browse Golden Compass investment pools and allocate wallet funds into the pool that fits your goals." },
       { name: "robots", content: "noindex, nofollow" },
@@ -38,17 +40,17 @@ const KES = (n: number) =>
 const POOL_META: Record<string, { emblem: string; tagline: string; accent: string }> = {
   "stable-harbour": {
     emblem: "⚓",
-    tagline: "Calm waters, steady gains",
+    tagline: "View the recorded terms before allocating funds.",
     accent: "var(--teal)",
   },
   bahari: {
     emblem: "🧭",
-    tagline: "Charted growth across the seas",
+    tagline: "View the recorded terms before allocating funds.",
     accent: "var(--gold-300)",
   },
   "alpha-ventures": {
     emblem: "⚔️",
-    tagline: "Bold expeditions, greater spoils",
+    tagline: "View the recorded terms before allocating funds.",
     accent: "var(--gc-warning)",
   },
 };
@@ -85,13 +87,13 @@ function PoolsPage() {
     <div className="flex flex-col gap-5 px-5 pt-6 pb-28 anim-fade-up">
       <header>
         <p className="t-mono t-sec" style={{ fontSize: 9, letterSpacing: "0.18em" }}>
-          THE FLEET
+          AVAILABLE PRODUCTS
         </p>
         <h1 className="t-display t-gold mt-1" style={{ fontSize: 22 }}>
           Investment Pools
         </h1>
         <p className="t-serif t-sec mt-2" style={{ fontSize: 13, fontStyle: "italic" }}>
-          Choose your vessel. Each charts a different course through the markets.
+          Compare recorded product terms. Returns are not guaranteed.
         </p>
         <Link
           to="/guides/dividend-tracking"
@@ -144,7 +146,7 @@ function PoolsPage() {
                         NAV
                       </p>
                       <p className="t-display t-gold" style={{ fontSize: 16 }}>
-                        {Number(pool.current_nav ?? 100).toFixed(2)}
+                        {pool.current_nav == null ? "Unavailable" : Number(pool.current_nav).toFixed(2)}
                       </p>
                     </div>
                   </div>
@@ -157,9 +159,9 @@ function PoolsPage() {
                   </p>
 
                   <div className="mt-4 grid grid-cols-3 gap-2">
-                    <Stat label="MIN" value={KES(Number(pool.min_investment ?? 0))} />
-                    <Stat label="LOCK" value={`${pool.holding_period_days ?? 0}d`} />
-                    <Stat label="EXIT FEE" value={`${Number(pool.exit_fee_percent ?? 0)}%`} />
+                    <Stat label="MIN" value={pool.min_investment == null ? "Not set" : KES(pool.min_investment)} />
+                    <Stat label="LOCK" value={pool.holding_period_days == null ? "Not set" : `${pool.holding_period_days}d`} />
+                    <Stat label="EXIT FEE" value={pool.exit_fee_percent == null ? "Not set" : `${pool.exit_fee_percent}%`} />
                   </div>
 
                   <button
@@ -181,9 +183,11 @@ function PoolsPage() {
             id: depositPool.id,
             name: depositPool.name,
             min_investment: depositPool.min_investment,
+            holding_period_days: depositPool.holding_period_days,
+            exit_fee_percent: depositPool.exit_fee_percent,
           }}
           onClose={() => setDepositPool(null)}
-          onSuccess={() => setDepositPool(null)}
+          onSuccess={() => undefined}
         />
       )}
     </div>

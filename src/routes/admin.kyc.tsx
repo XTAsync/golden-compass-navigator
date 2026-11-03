@@ -7,6 +7,8 @@ import { useUserRole } from "@/hooks/useUserRole";
 export const Route = createFileRoute("/admin/kyc")({
   head: () => ({
     meta: [
+      { name: "twitter:card", content: "summary" },
+      { property: "og:type", content: "website" },
       { title: "KYC Queue — Admin" },
       { name: "description", content: "Review pending investor KYC submissions, approve or reject identity verification requests." },
       { name: "robots", content: "noindex, nofollow" },

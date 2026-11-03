@@ -2,24 +2,23 @@
 // behaviour (e.g. broker mock -> live) is a data change, not a code change.
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 
-const CACHE_MS = 30_000;
-const cache = new Map<string, { value: unknown; at: number }>();
-
 export async function getConfig<T>(key: string, fallback: T): Promise<T> {
-  const hit = cache.get(key);
-  if (hit && Date.now() - hit.at < CACHE_MS) return hit.value as T;
   try {
-    const { data } = await supabaseAdmin
+    const { data, error } = await supabaseAdmin
       .from("app_config")
       .select("value")
       .eq("key", key)
       .maybeSingle();
-    const value = (data?.value ?? fallback) as T;
-    cache.set(key, { value, at: Date.now() });
-    return value;
+    if (error) return fallback;
+    return (data?.value ?? fallback) as T;
   } catch {
     return fallback;
   }
+}
+
+/** Fail closed; no cached approvals or truthy strings may enable real payments. */
+export async function isMpesaLiveEnabled(): Promise<boolean> {
+  return (await getConfig<unknown>("mpesa_live", false)) === true;
 }
 
 export type BrokerMode = "mock" | "live";

@@ -7,6 +7,8 @@ import { useUserRole } from "@/hooks/useUserRole";
 export const Route = createFileRoute("/admin")({
   head: () => ({
     meta: [
+      { name: "twitter:card", content: "summary" },
+      { property: "og:type", content: "website" },
       { title: "Admin — Golden Compass" },
       { name: "description", content: "Golden Compass operations panel: users, KYC queue, transactions and assets under management." },
       { name: "robots", content: "noindex, nofollow" },
@@ -77,7 +79,7 @@ function AdminHome() {
     <div className="flex flex-col gap-5 px-5 pt-6 pb-28 anim-fade-up">
       <header>
         <p className="t-mono t-sec" style={{ fontSize: 9, letterSpacing: "0.18em" }}>
-          THE BRIDGE
+          OPERATIONS
         </p>
         <h1 className="t-display t-gold mt-1" style={{ fontSize: 22 }}>
           Admin Console

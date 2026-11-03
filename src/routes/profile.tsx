@@ -7,6 +7,8 @@ import { useUserRole } from "@/hooks/useUserRole";
 export const Route = createFileRoute("/profile")({
   head: () => ({
     meta: [
+      { name: "twitter:card", content: "summary" },
+      { property: "og:type", content: "website" },
       { title: "Profile — Golden Compass" },
       { name: "description", content: "Manage your Golden Compass account, KYC verification status and personal settings." },
       { name: "robots", content: "noindex, nofollow" },
@@ -85,7 +87,7 @@ function ProfilePage() {
     <div className="flex flex-col gap-5 px-5 pt-6 pb-28 anim-fade-up">
       <header>
         <p className="t-mono t-sec" style={{ fontSize: 9, letterSpacing: "0.18em" }}>
-          THE LOG
+          ACCOUNT
         </p>
         <h1 className="t-display t-gold mt-1" style={{ fontSize: 22 }}>
           Profile
@@ -136,7 +138,7 @@ function ProfilePage() {
                     border: "1px solid rgba(201,168,76,0.4)",
                   }}
                 >
-                  ⚓ ADMIN
+                  ADMIN
                 </span>
               )}
             </div>
@@ -161,7 +163,7 @@ function ProfilePage() {
               style={{ borderColor: "rgba(255,255,255,0.06)", textDecoration: "none" }}
             >
               <span className="t-serif t-parch" style={{ fontSize: 14 }}>
-                🗺️ Portfolio
+                Portfolio
               </span>
               <span className="t-gold" style={{ fontSize: 14 }}>›</span>
             </Link>
@@ -193,7 +195,7 @@ function ProfilePage() {
                 style={{ borderColor: "rgba(255,255,255,0.06)", textDecoration: "none" }}
               >
                 <span className="t-serif t-gold" style={{ fontSize: 14 }}>
-                  ⚓ Admin Panel
+                  Admin Panel
                 </span>
                 <span className="t-gold" style={{ fontSize: 14 }}>›</span>
               </Link>

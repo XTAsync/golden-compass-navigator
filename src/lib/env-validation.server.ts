@@ -22,6 +22,7 @@ const ENV_VARS: EnvVar[] = [
   { name: "MPESA_PASSKEY", required: false, description: "M-Pesa STK Push passkey" },
   { name: "MPESA_CALLBACK_URL", required: false, description: "Public URL for M-Pesa callbacks" },
   { name: "MPESA_ENV", required: false, description: "M-Pesa environment: sandbox or production" },
+  { name: "MPESA_CALLBACK_SECRET", required: false, description: "Random secret (>= 24 chars) appended to M-Pesa callback URLs; REQUIRED before enabling live M-Pesa, otherwise callbacks are rejected" },
 
   // M-Pesa B2C (required for withdrawals)
   { name: "MPESA_INITIATOR_NAME", required: false, description: "B2C initiator name" },

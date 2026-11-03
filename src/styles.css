@@ -833,3 +833,9 @@
   box-shadow: var(--shadow-card), inset 0 1px 0 rgba(232,242,250,0.10);
 }
 
+
+/* Money sheets (ported from thegolden-compass PR2) */
+.t-label { font-family: var(--font-mono, monospace); font-size: 12px; letter-spacing: 0.06em; color: rgba(232, 215, 180, 0.88); }
+.t-status { font-size: 14px; font-weight: 600; }
+.tap44 { min-height: 44px; min-width: 44px; }
+.money-error { color: #ff8a73; font-size: 14px; }

@@ -1,149 +1,103 @@
-import { useEffect, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
-import { toast } from "sonner";
+import { useRef, useState } from "react";
+import { MoneySheet } from "@/components/MoneySheet";
+import { useMoneyConfig } from "@/hooks/useMoneyConfig";
+import { newRequestId, postMoney } from "@/lib/money-client";
 
 interface Props {
-  pool: { id: string; name: string; min_investment: number | null };
+  pool: {
+    id: string;
+    name: string;
+    min_investment: number | null;
+    holding_period_days?: number | null;
+    exit_fee_percent?: number | null;
+  };
   onClose: () => void;
   onSuccess?: () => void;
 }
 
-// "Invest into pool" — moves funds from the user wallet into the selected pool.
-// M-Pesa top-ups are handled separately by WalletDepositModal.
-export function DepositModal({ pool, onClose, onSuccess }: Props) {
-  const [amount, setAmount] = useState(String(pool.min_investment ?? 1));
-  const [busy, setBusy] = useState(false);
-  const [walletBal, setWalletBal] = useState<number | null>(null);
+const kes = (n: number) => `KES ${Math.round(n).toLocaleString("en-KE")}`;
 
-  useEffect(() => {
-    (async () => {
-      const { data: sess } = await supabase.auth.getSession();
-      const uid = sess.session?.user?.id;
-      if (!uid) return;
-      const { data } = await supabase
-        .from("profiles")
-        .select("wallet_balance")
-        .eq("id", uid)
-        .maybeSingle();
-      setWalletBal(Number(data?.wallet_balance ?? 0));
-    })();
-  }, []);
+// "Invest from wallet into a pool" (design D5, D9, D12): the sheet says what the lock is before the
+// tap, the button names it, and a repeat tap shows "Already invested" instead of a second charge.
+// M-Pesa top-ups are handled by WalletDepositModal.
+export function DepositModal({ pool, onClose, onSuccess }: Props) {
+  const min = pool.min_investment ?? 1;
+  const lockDays = Number(pool.holding_period_days ?? 0);
+  const [amount, setAmount] = useState(String(Math.ceil(min)));
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState("");
+  const [done, setDone] = useState<{ amount: number; balance: number | null; replayed: boolean } | null>(null);
+  const requestId = useRef(newRequestId());
+  const cfg = useMoneyConfig({}, !done);
+
+  const amt = amount === "" ? 0 : Number(amount);
+  const wallet = cfg.data?.wallet_balance ?? null;
+  const paused = cfg.data?.paused.investing ?? false;
+
+  let blocker = "";
+  if (paused) blocker = "Investing is paused for a moment. Your money is safe. Try again later.";
+  else if (amt > 0 && amt < min) blocker = `The minimum is ${kes(min)}.`;
+  else if (wallet !== null && amt > wallet) blocker = `Your wallet has ${kes(wallet)}. Top up first.`;
+  const canSubmit = !busy && amt >= min && !blocker && !cfg.error && wallet !== null;
+  const lockText = lockDays > 0 ? `Locked for ${lockDays} days` : "No lock period";
 
   const submit = async () => {
-    if (busy) return;
-    const amt = Number(amount);
-    if (!amt || amt < 1) {
-      toast.error("Enter a valid amount");
-      return;
-    }
-    if (walletBal !== null && amt > walletBal) {
-      toast.error("Insufficient wallet balance. Top up first.");
-      return;
-    }
-    setBusy(true);
-    try {
-      const { data: sess } = await supabase.auth.getSession();
-      const token = sess.session?.access_token;
-      if (!token) {
-        toast.error("Please log in again");
-        setBusy(false);
-        return;
-      }
-      const res = await fetch("/api/wallet-invest", {
-        method: "POST",
-        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-        body: JSON.stringify({ amount: amt, pool_id: pool.id }),
-      });
-      const data = (await res.json()) as {
-        error?: string;
-        success?: boolean;
-        new_balance?: number;
-      };
-      if (!res.ok || !data.success) {
-        toast.error(data.error || "Investment failed");
-        setBusy(false);
-        return;
-      }
-      toast.success(`Invested KES ${amt.toLocaleString()} into ${pool.name} ✓`);
-      if (typeof data.new_balance === "number") setWalletBal(data.new_balance);
+    if (!canSubmit) return;
+    setBusy(true); setError("");
+    const r = await postMoney("/api/wallet-invest", { pool_id: pool.id, amount: amt, request_id: requestId.current });
+    setBusy(false);
+    if (r.ok) {
+      setDone({ amount: Number(r.data.amount ?? amt), balance: typeof r.data.new_balance === "number" ? r.data.new_balance : null, replayed: !!r.data.replayed });
       onSuccess?.();
-      setTimeout(onClose, 800);
-    } catch (e) {
-      toast.error(e instanceof Error ? e.message : "Network error");
-      setBusy(false);
+    } else {
+      setError(String(r.data.error ?? "That didn't go through. Try again."));
     }
   };
 
-  const insufficient = walletBal !== null && Number(amount) > walletBal;
+  if (done) {
+    return (
+      <MoneySheet title={done.replayed ? "Already invested" : "Invested"} eyebrow={pool.name.toUpperCase()} onClose={onClose}
+        liveMessage={`${kes(done.amount)} invested in ${pool.name}.`}
+        footer={<button onClick={onClose} className="btn-brass w-full tap44" style={{ padding: "14px 16px", fontSize: 14 }}>Done</button>}>
+        <p className="t-display t-gold" style={{ fontSize: 30 }}>{kes(done.amount)}</p>
+        <p className="t-label mt-1">{done.replayed ? "This investment was already made. Nothing was charged twice." : `is now in ${pool.name}.`}</p>
+        {done.balance !== null && <p className="t-label mt-3">Wallet balance: {kes(done.balance)}</p>}
+      </MoneySheet>
+    );
+  }
 
   return (
-    <div
-      className="fixed inset-0 z-50 flex items-end justify-center"
-      style={{ background: "rgba(0,0,0,0.6)", backdropFilter: "blur(8px)" }}
-      onClick={onClose}
-    >
-      <div
-        className="glass-gold w-full max-w-[430px] rounded-t-3xl p-6 anim-fade-up"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <div className="flex items-start justify-between mb-4">
-          <div>
-            <p className="t-mono t-sec" style={{ fontSize: 9, letterSpacing: "0.18em" }}>
-              INVEST FROM WALLET INTO
-            </p>
-            <h2 className="t-display t-gold mt-1" style={{ fontSize: 18 }}>
-              {pool.name}
-            </h2>
-          </div>
-          <button onClick={onClose} className="t-gold" style={{ fontSize: 22 }}>
-            ×
+    <MoneySheet title={`Invest in ${pool.name}`} eyebrow="FROM YOUR WALLET" onClose={onClose} locked={busy}
+      liveMessage={blocker || error}
+      footer={
+        <>
+          {(blocker || error) && <p className="money-error mb-2" role="alert">{error || blocker}</p>}
+          {cfg.error && <button onClick={cfg.retry} className="t-gold tap44 mb-2 underline" style={{ fontSize: 14 }}>Can't load your balance. Try again</button>}
+          <button onClick={submit} disabled={!canSubmit} className="btn-brass w-full tap44"
+            style={{ padding: "14px 16px", fontSize: 14, opacity: canSubmit ? 1 : 0.5 }}>
+            {busy ? "Investing…" : `Invest ${amt > 0 ? kes(amt) : ""}${lockDays > 0 ? ` for ${lockDays} days` : ""}`.trim()}
           </button>
-        </div>
-
-        <div className="glass rounded-lg p-3 mb-4 flex items-center justify-between">
-          <span className="t-mono t-sec" style={{ fontSize: 9, letterSpacing: "0.14em" }}>
-            WALLET BALANCE
-          </span>
-          <span className="t-display t-gold" style={{ fontSize: 16 }}>
-            KES {(walletBal ?? 0).toLocaleString()}
-          </span>
-        </div>
-
-        <label className="t-mono t-sec block mb-1" style={{ fontSize: 9, letterSpacing: "0.14em" }}>
-          AMOUNT (KES)
-        </label>
-        <input
-          type="number"
-          inputMode="numeric"
-          value={amount}
-          onChange={(e) => setAmount(e.target.value)}
-          min={pool.min_investment ?? 1}
-          className="w-full glass rounded-lg px-3 py-3 t-display t-parch mb-3"
-          style={{ fontSize: 18 }}
-        />
-
-        <p className="t-mono t-muted mb-4" style={{ fontSize: 9 }}>
-          Min: KES {pool.min_investment ?? 1}. Funds debited from your wallet instantly.
-          {insufficient && (
-            <span className="block mt-1" style={{ color: "#e85d3a" }}>
-              ⚠ Not enough in wallet — top up via Deposit on Home.
-            </span>
-          )}
-        </p>
-
-        <button
-          onClick={submit}
-          disabled={busy || insufficient}
-          className="btn-brass w-full"
-          style={{
-            padding: "14px 16px",
-            fontSize: 12,
-            opacity: busy || insufficient ? 0.6 : 1,
-          }}
-        >
-          {busy ? "INVESTING…" : "INVEST FROM WALLET"}
-        </button>
+        </>
+      }>
+      <div className="glass rounded-lg p-3 mb-3 flex items-center justify-between">
+        <span className="t-label">Wallet balance</span>
+        <span className="t-display t-gold" style={{ fontSize: 16 }}>{wallet === null ? "…" : kes(wallet)}</span>
       </div>
-    </div>
+
+      <label htmlFor="inv-amount" className="t-label block mb-1">Amount (whole shillings)</label>
+      <input id="inv-amount" inputMode="numeric" autoComplete="off" value={amount}
+        onChange={(e) => { setAmount(e.target.value.replace(/\D/g, "").slice(0, 9)); requestId.current = newRequestId(); setError(""); }}
+        className="w-full glass rounded-lg px-3 py-3 t-display t-parch mb-3" style={{ fontSize: 20 }} />
+
+      <div className="glass rounded-lg p-3 mb-3">
+        <p className="t-label">What to expect</p>
+        <ul className="t-serif t-parch mt-1 space-y-1" style={{ fontSize: 14 }}>
+          <li>{lockText}{lockDays > 0 ? ", counted from your first investment in this pool." : "."}</li>
+          {lockDays > 0 && <li>Adding more later does not restart the lock.</li>}
+          {pool.exit_fee_percent != null && <li>Exit fee when you withdraw: {pool.exit_fee_percent}%.</li>}
+          <li>Minimum {kes(min)}.</li>
+        </ul>
+      </div>
+    </MoneySheet>
   );
 }

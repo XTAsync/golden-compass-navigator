@@ -1,40 +1,12 @@
-import { useEffect, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { useCapabilities } from "@/features/settings/hooks";
 import { useAuth } from "./useAuth";
 
-type AppRole = "investor" | "admin" | "compliance" | "auditor";
-
+// Presentation only; route guards, server actions and RLS authorize independently.
 export function useUserRole() {
-  const { user, loading: authLoading } = useAuth();
-  const [roles, setRoles] = useState<AppRole[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    if (authLoading) return;
-    if (!user) {
-      setRoles([]);
-      setLoading(false);
-      return;
-    }
-    let cancelled = false;
-    (async () => {
-      const { data } = await supabase
-        .from("user_roles")
-        .select("role")
-        .eq("user_id", user.id);
-      if (cancelled) return;
-      setRoles((data ?? []).map((r) => r.role as AppRole));
-      setLoading(false);
-    })();
-    return () => {
-      cancelled = true;
-    };
-  }, [user, authLoading]);
-
+  const { loading, user } = useAuth();
+  const capabilities = useCapabilities();
   return {
-    roles,
-    loading: authLoading || loading,
-    isAdmin: roles.includes("admin"),
-    hasRole: (r: AppRole) => roles.includes(r),
+    loading: loading || Boolean(user && capabilities.isPending),
+    isAdmin: capabilities.data?.isAdmin === true,
   };
 }

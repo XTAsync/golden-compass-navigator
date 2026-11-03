@@ -5,6 +5,8 @@ import { OrderList, useOrders } from "@/components/OrderHistory";
 export const Route = createFileRoute("/orders")({
   head: () => ({
     meta: [
+      { name: "twitter:card", content: "summary" },
+      { property: "og:type", content: "website" },
       { title: "Order History — Golden Compass" },
       { name: "description", content: "Every buy and sell order placed from your Golden Compass account, with live status." },
       { name: "robots", content: "noindex, nofollow" },
