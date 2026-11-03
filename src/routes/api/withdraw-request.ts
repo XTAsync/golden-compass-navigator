@@ -1,14 +1,20 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { rateLimit } from "@/lib/rate-limit.server";
-import { supabaseAdmin } from "@/integrations/supabase/client.server";
+import { normaliseKenyanPhone } from "@/lib/phone";
 import { authenticateRequest, json } from "@/lib/auth.server";
 import { requireFreshAal2 } from "@/lib/mfa.server";
 import { checkTransactionLimit } from "@/lib/limits.server";
 import { screenTransaction } from "@/lib/aml.server";
+import { isMpesaLiveEnabled } from "@/lib/config.server";
+import { requestWalletWithdrawal, requestWithdrawal } from "@/lib/ledger.server";
+import { moneyErrorResponse } from "@/lib/money-errors";
 
-// Body: { pool_id: string, amount: number }
-// Enforces holding period & exit fee. Creates a 'pending' withdrawal transaction
-// that admins approve from /admin/transactions (off-app B2C payout).
+// Body: { source: "wallet" | "pool", pool_id?: string (pool only), amount: number (whole KES),
+//         phone: string, request_id?: uuid, expected_net?: number }
+// Reserves the user's units and creates a 'pending' withdrawal in ONE database transaction
+// (request_withdrawal). Holding period, exit fee, balance check and the reservation all happen
+// under a row lock, so parallel requests cannot spend the same holding twice.
+// Admins approve from /admin/transactions (off-app B2C payout).
 export const Route = createFileRoute("/api/withdraw-request")({
   server: {
     handlers: {
@@ -17,109 +23,94 @@ export const Route = createFileRoute("/api/withdraw-request")({
           const authResult = await authenticateRequest(request);
           if (authResult instanceof Response) return authResult;
           const { userId, claims } = authResult;
+          if (!(await isMpesaLiveEnabled()))
+            return json(
+              { error: "Real withdrawals are disabled pending compliance approval." },
+              403,
+            );
           if (!rateLimit(userId, 5, 60_000)) return json({ error: "Too many requests" }, 429);
 
           const mfaBlock = await requireFreshAal2(userId, claims);
           if (mfaBlock) return mfaBlock;
 
-          const body = (await request.json()) as { pool_id?: string; amount?: number; phone?: string };
+          const body = (await request.json()) as {
+            source?: string;
+            pool_id?: string;
+            amount?: number;
+            phone?: string;
+            request_id?: string;
+            expected_net?: number;
+          };
+          const source = body.source === "wallet" ? "wallet" : "pool";
           const pool_id = String(body.pool_id ?? "");
           const amount = Number(body.amount);
-          if (amount <= 0) return json({ error: "Amount must be greater than 0" }, 400);
-          const phoneRaw = String(body.phone ?? "").replace(/\D/g, "");
-          let phone = phoneRaw;
-          if (phone.startsWith("0")) phone = "254" + phone.slice(1);
-          else if (phone.startsWith("7") || phone.startsWith("1")) phone = "254" + phone;
-          if (!pool_id || !amount || amount <= 0) return json({ error: "Invalid input" }, 400);
-          if (!/^254(7|1)\d{8}$/.test(phone)) return json({ error: "Invalid M-Pesa phone number" }, 400);
+          if ((source === "pool" && !pool_id) || !Number.isFinite(amount) || amount <= 0)
+            return json({ error: "Invalid input" }, 400);
+          const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+          const requestId = body.request_id && UUID.test(body.request_id) ? body.request_id : null;
+          const expectedNet =
+            body.expected_net != null && Number.isFinite(Number(body.expected_net))
+              ? Number(body.expected_net)
+              : null;
 
-          // Compliance caps (placeholder thresholds — TBD).
+          const phoneRaw = String(body.phone ?? "").replace(/\D/g, "");
+          const phone = normaliseKenyanPhone(phoneRaw);
+          if (!phone) return json({ error: "Invalid M-Pesa phone number" }, 400);
+
+          // Compliance caps (placeholder thresholds - TBD).
           const limit = await checkTransactionLimit(userId, "withdrawal", amount);
           if (!limit.ok) return json({ error: limit.error }, 400);
 
-          const [{ data: pool }, { data: inv }] = await Promise.all([
-            supabaseAdmin
-              .from("investment_pools")
-              .select("id, name, exit_fee_percent, holding_period_days")
-              .eq("id", pool_id)
-              .maybeSingle(),
-            supabaseAdmin
-              .from("user_investments")
-              .select("id, current_value, units_owned, invested_amount, created_at")
-              .eq("user_id", userId)
-              .eq("pool_id", pool_id)
-              .maybeSingle(),
-          ]);
-          if (!pool) return json({ error: "Pool not found" }, 404);
-          if (!inv) return json({ error: "You have no holdings in this pool" }, 400);
+          const res =
+            source === "wallet"
+              ? await requestWalletWithdrawal({ userId, amount, phone, requestId, expectedNet })
+              : await requestWithdrawal({ userId, poolId: pool_id, amount, phone, requestId, expectedNet });
 
-          const currentValue = Number(inv.current_value ?? 0);
-          if (amount > currentValue)
-            return json({ error: `Maximum withdrawable: KES ${currentValue.toFixed(2)}` }, 400);
+          const failure = moneyErrorResponse(res);
+          if (failure) return json(failure.body, failure.status);
 
-          // Holding period
-          const lockDays = Number(pool.holding_period_days ?? 0);
-          if (lockDays > 0 && inv.created_at) {
-            const ageMs = Date.now() - new Date(inv.created_at).getTime();
-            const daysHeld = ageMs / (1000 * 60 * 60 * 24);
-            if (daysHeld < lockDays) {
-              const remaining = Math.ceil(lockDays - daysHeld);
-              return json(
-                { error: `Locked for ${remaining} more day${remaining === 1 ? "" : "s"}` },
-                400
-              );
-            }
+          if (res.result === "replayed") {
+            return json({
+              success: true,
+              replayed: true,
+              transaction_id: res.transaction_id,
+              status: res.status,
+              gross: Number(res.gross),
+              fee: Number(res.fee),
+              net: Number(res.net),
+            });
           }
 
-          // Exit fee
-          const feePct = Number(pool.exit_fee_percent ?? 0);
-          const fee = (amount * feePct) / 100;
-          const net = amount - fee;
+          const txId = String(res.transaction_id);
+          const gross = Number(res.gross);
+          const fee = Number(res.fee);
+          const net = Number(res.net);
 
-          // Create pending withdrawal — admin approves from /admin/transactions
-          const { data: tx, error: txErr } = await supabaseAdmin
-            .from("transactions")
-            .insert({
-              user_id: userId,
-              pool_id,
-              amount: net, // net amount paid out
-              type: "withdrawal",
-              status: "pending",
-              payout_phone: phone,
-            })
-            .select("id")
-            .single();
-          if (txErr || !tx) return json({ error: "Failed to record request" }, 500);
-
-          await screenTransaction({ userId, transactionId: tx.id, amount, kind: "withdrawal" });
-
-          // Reserve units immediately so balance can't be double-spent
-          const ratio = currentValue > 0 ? amount / currentValue : 0;
-          const unitsBurned = Math.round((Number(inv.units_owned ?? 0) * ratio) * 1_000_000) / 1_000_000;
-          await supabaseAdmin
-            .from("user_investments")
-            .update({
-              current_value: currentValue - amount,
-              units_owned: Number(inv.units_owned ?? 0) - unitsBurned,
-              invested_amount: Math.max(0, Number(inv.invested_amount ?? 0) - amount),
-            })
-            .eq("id", inv.id);
+          // AML screening is advisory here (raises a flag for review); the reservation is already safe.
+          try {
+            await screenTransaction({
+              userId,
+              transactionId: txId,
+              amount: gross,
+              kind: "withdrawal",
+            });
+          } catch (e) {
+            console.error("[withdraw-request] AML screening failed", e);
+          }
 
           return json({
             success: true,
-            transaction_id: tx.id,
-            gross: amount,
+            transaction_id: txId,
+            gross,
             fee,
             net,
-            message: `Withdrawal of KES ${net.toFixed(2)} requested (KES ${fee.toFixed(2)} exit fee). Pending admin approval.`,
+            message: `Withdrawal of KES ${net.toLocaleString("en-KE")} requested${fee > 0 ? ` (fee KES ${fee.toLocaleString("en-KE")})` : ""}. Usually within 24 hours.`,
           });
         } catch (e) {
-          const msg = e instanceof Error ? e.message : "Unknown error";
-          return json({ error: msg }, 500);
+          console.error("[withdraw-request] error", e);
+          return json({ error: "Could not process the withdrawal request" }, 500);
         }
       },
     },
   },
 });
-
-

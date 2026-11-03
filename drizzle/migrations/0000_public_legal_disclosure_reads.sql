@@ -1,0 +1,2 @@
+GRANT SELECT ON public.app_config TO anon;
+CREATE POLICY "Public read legal disclosure rows" ON public.app_config FOR SELECT TO anon USING (key IN ('broker_of_record_disclosure', 'risk_warning', 'legal_entity'));

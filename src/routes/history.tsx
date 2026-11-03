@@ -6,6 +6,8 @@ import { useAuth } from "@/hooks/useAuth";
 export const Route = createFileRoute("/history")({
   head: () => ({
     meta: [
+      { name: "twitter:card", content: "summary" },
+      { property: "og:type", content: "website" },
       { title: "Transaction History — Golden Compass" },
       { name: "description", content: "Your complete log of Golden Compass deposits, withdrawals and pool investments." },
       { name: "robots", content: "noindex, nofollow" },
@@ -72,7 +74,7 @@ function HistoryPage() {
     <div className="flex flex-col gap-5 px-5 pt-6 pb-28 anim-fade-up">
       <header>
         <p className="t-mono t-sec" style={{ fontSize: 9, letterSpacing: "0.18em" }}>
-          THE LEDGER
+          TRANSACTIONS
         </p>
         <h1 className="t-display t-gold mt-1" style={{ fontSize: 22 }}>
           Transaction History
@@ -92,7 +94,7 @@ function HistoryPage() {
             The ledger is empty.
           </p>
           <p className="t-mono t-muted mt-2" style={{ fontSize: 10 }}>
-            Your voyages will be recorded here.
+            Your transactions will be recorded here.
           </p>
         </div>
       ) : (

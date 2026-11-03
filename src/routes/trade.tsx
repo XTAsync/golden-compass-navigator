@@ -19,6 +19,8 @@ import { SYMBOLS, type SymbolEntry } from "@/lib/symbols";
 export const Route = createFileRoute("/trade")({
   head: () => ({
     meta: [
+      { name: "twitter:card", content: "summary" },
+      { property: "og:type", content: "website" },
       { title: "Trade Stocks — Golden Compass" },
       { name: "description", content: "Buy and sell NSE and global stocks from your Golden Compass account." },
       { name: "robots", content: "noindex, nofollow" },

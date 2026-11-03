@@ -1,14 +1,24 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 import { authenticateRequest, json } from "@/lib/auth.server";
-import { refundUnits, refundAndFail } from "@/lib/investment-utils.server";
 import { getMpesaUrls } from "@/lib/mpesa-config.server";
+import { getDarajaToken } from "@/lib/daraja-token.server";
+import { isMpesaLiveEnabled } from "@/lib/config.server";
+import { withCallbackSecret } from "@/lib/mpesa-security.server";
+import { approveWithdrawalStart, failWithdrawal } from "@/lib/ledger.server";
 
-// Admin approves a withdrawal → automatically calls M-Pesa B2C to pay out.
+// Admin approves a withdrawal -> automatically calls M-Pesa B2C to pay out.
 // Body: { transaction_id: string, action: "approve" | "reject" }
-// On approve: triggers B2C; the result callback (/api/mpesa-b2c-result) finalizes
-// the transaction. If the B2C call itself fails, units are auto-refunded.
-// On reject: refunds units, marks failed.
+//
+// State machine (each step is an atomic database function, so two admins or a double click can
+// never pay twice):
+//   pending --approve--> processing --B2C result callback--> confirmed | failed(+refund)
+//   pending --reject---> failed(+refund)
+//
+// IMPORTANT: we only refund automatically when we KNOW no payout was sent (M-Pesa auth failed, or
+// Safaricom explicitly rejected the request). If the B2C request may have reached Safaricom but we
+// lost the response (network error), the withdrawal stays 'processing' for manual reconciliation -
+// refunding there could pay the user twice.
 export const Route = createFileRoute("/api/withdraw-approve")({
   server: {
     handlers: {
@@ -18,10 +28,13 @@ export const Route = createFileRoute("/api/withdraw-approve")({
           if (authResult instanceof Response) return authResult;
           const { userId: adminId } = authResult;
 
-          const { data: adminRole } = await supabaseAdmin.from("user_roles").select("role").eq("user_id", adminId).eq("role", "admin").maybeSingle();
+          const { data: adminRole } = await supabaseAdmin
+            .from("user_roles")
+            .select("role")
+            .eq("user_id", adminId)
+            .eq("role", "admin")
+            .maybeSingle();
           if (!adminRole) return json({ error: "Forbidden: admin only" }, 403);
-
-
 
           const body = (await request.json()) as {
             transaction_id?: string;
@@ -32,134 +45,171 @@ export const Route = createFileRoute("/api/withdraw-approve")({
           if (!txId || (action !== "approve" && action !== "reject"))
             return json({ error: "Invalid input" }, 400);
 
-          const { data: tx } = await supabaseAdmin
-            .from("transactions")
-            .select("id, user_id, pool_id, amount, status, type, payout_phone")
-            .eq("id", txId)
-            .maybeSingle();
-          if (!tx) return json({ error: "Transaction not found" }, 404);
-          if (tx.type !== "withdrawal") return json({ error: "Not a withdrawal" }, 400);
-          if (tx.status !== "pending") return json({ error: "Already processed" }, 400);
-
+          // ---- REJECT: fail + refund, only from 'pending' ----
           if (action === "reject") {
-            await refundUnits(tx);
-            await supabaseAdmin.from("transactions").update({ status: "failed" }).eq("id", txId);
-            return json({ success: true, status: "failed" });
+            const res = await failWithdrawal(txId, "Rejected by admin", ["pending"]);
+            if (res.result === "failed") return json({ success: true, status: "failed" });
+            if (res.result === "not_found") return json({ error: "Transaction not found" }, 404);
+            if (res.result === "not_a_withdrawal") return json({ error: "Not a withdrawal" }, 400);
+            return json({ error: "Already processed" }, 400);
           }
 
-          // ---- APPROVE → trigger B2C payout ----
-          if (!tx.payout_phone) {
-            return json({ error: "Missing payout phone on transaction" }, 400);
-          }
+          // ---- APPROVE ----
+          if (!(await isMpesaLiveEnabled()))
+            return json({ error: "Real payouts are disabled pending compliance approval." }, 403);
 
-          // Sandbox B2C defaults (override via env when going live)
-          const initiator = process.env.MPESA_INITIATOR_NAME || "testapi";
-          const securityCredential =
-            process.env.MPESA_SECURITY_CREDENTIAL ||
-            // Pre-encrypted "Safaricom999!*!" for the sandbox cert
-            "VlmZbZ4HgZeC1qMXcMU2Z4f5o3vbHXSrMrEhlIEGu+Sx5TZkO+0rlT8I7HoIM2eoCK1m8r4rh8XmlKlhmZ9mTtxk8Q5dCJVvZBzNL2jBXf6cQB6/2XSgqXPgM7vUq+1WVoIqCNsFPvjjkkn4lwHB7GPV/3a4bTl4aCOaUqXr+5oVy7VlPCXOzCdVkzc9pSh+jcRLFLSnP4PZxKOIJsyMIQrEqTVj2N5K1CWl6Hbdh2T6c0bXhz2sxTV6HrhhzXIHGnj+MYEyKy1xAWBC8c3p0lH8oAZJSL4FtAcW7lEEMmENfP0+5pY1+1n0mlS8YjLqMeXFIkkRywrkMwZUySE5DA==";
-          const b2cShortcode = process.env.MPESA_B2C_SHORTCODE || "600000";
+          // Check configuration BEFORE moving the withdrawal to 'processing', so a config problem
+          // never strands a payout.
+          const initiator = process.env["MPESA_INITIATOR_NAME"];
+          const securityCredential = process.env["MPESA_SECURITY_CREDENTIAL"];
+          const b2cShortcode = process.env["MPESA_B2C_SHORTCODE"];
           const consumerKey = process.env.MPESA_CONSUMER_KEY;
           const consumerSecret = process.env.MPESA_CONSUMER_SECRET;
-          const callbackBase = process.env.MPESA_CALLBACK_URL; // e.g. https://<host>/api/mpesa-callback
-
-          if (!consumerKey || !consumerSecret || !callbackBase) {
+          const callbackBase = process.env.MPESA_CALLBACK_URL;
+          if (
+            !consumerKey ||
+            !consumerSecret ||
+            !callbackBase ||
+            !initiator ||
+            !securityCredential ||
+            !b2cShortcode
+          ) {
             return json({ error: "M-Pesa credentials not configured" }, 500);
           }
-
-          // Derive B2C result/timeout URLs from the existing callback URL host
           let resultUrl = "";
           let timeoutUrl = "";
           try {
-            const u = new URL(callbackBase);
-            resultUrl = `${u.origin}/api/mpesa-b2c-result`;
-            timeoutUrl = `${u.origin}/api/mpesa-b2c-result`;
+            const u = new URL(
+              /^https?:\/\//i.test(callbackBase) ? callbackBase : "https://" + callbackBase,
+            );
+            resultUrl = withCallbackSecret(`${u.origin}/api/mpesa-b2c-result`);
+            timeoutUrl = withCallbackSecret(`${u.origin}/api/mpesa-b2c-timeout`);
           } catch {
             return json({ error: "Invalid MPESA_CALLBACK_URL" }, 500);
           }
 
-          // Mark processing so re-clicks don't double-fire
-          await supabaseAdmin
-            .from("transactions")
-            .update({ status: "processing" })
-            .eq("id", txId);
+          // Atomically move pending -> processing (only once, only for a real reserved withdrawal).
+          const start = await approveWithdrawalStart(txId, adminId);
+          switch (start.result) {
+            case "ok":
+              break;
+            case "not_found":
+              return json({ error: "Transaction not found" }, 404);
+            case "not_a_withdrawal":
+              return json({ error: "Not a withdrawal" }, 400);
+            case "forbidden":
+              return json({ error: "Forbidden: admin only" }, 403);
+            case "paused":
+              return json({ error: "Withdrawals are paused. Unpause before approving." }, 503);
+            case "self_approval":
+              return json(
+                { error: "You cannot approve your own withdrawal. Ask another admin." },
+                403,
+              );
+            case "not_reserved":
+              return json(
+                { error: "This withdrawal has no reserved holdings and cannot be paid" },
+                400,
+              );
+            default:
+              return json({ error: "Already processed" }, 400);
+          }
+          const payoutPhone = String(start.payout_phone ?? "");
+          const amount = Math.floor(Number(start.amount));
+          if (!payoutPhone || !(amount >= 1)) {
+            await failWithdrawal(txId, "Missing payout phone or amount", ["processing"]);
+            return json({ error: "Missing payout phone on transaction" }, 400);
+          }
 
-          // OAuth token
+          // OAuth token. A failure here means nothing was sent to Safaricom: safe to refund.
           const mpesaUrls = getMpesaUrls();
-          const tokRes = await fetch(
-            mpesaUrls.oauth,
-            { headers: { Authorization: "Basic " + btoa(`${consumerKey}:${consumerSecret}`) } },
-          );
-          if (!tokRes.ok) {
-            await refundAndFail(tx, "M-Pesa auth failed");
+          let access_token: string;
+          try {
+            access_token = await getDarajaToken(consumerKey, consumerSecret);
+          } catch {
+            await failWithdrawal(txId, "M-Pesa auth failed", ["processing"]);
             return json({ error: "M-Pesa auth failed" }, 502);
           }
-          const { access_token } = (await tokRes.json()) as { access_token: string };
 
           const b2cBody = {
-            OriginatorConversationID: `GC-WD-${tx.id}`,
+            OriginatorConversationID: `GC-WD-${txId}`,
             InitiatorName: initiator,
             SecurityCredential: securityCredential,
             CommandID: "BusinessPayment",
-            Amount: Math.floor(Number(tx.amount)),
+            Amount: amount,
             PartyA: b2cShortcode,
-            PartyB: tx.payout_phone,
-            Remarks: `Golden Compass withdrawal ${tx.id.slice(0, 8)}`,
-            QueueTimeOutURL: timeoutUrl,
+            PartyB: payoutPhone,
+            Remarks: `Golden Compass withdrawal ${txId.slice(0, 8)}`,
+            QueueTimeOutURL: timeoutUrl, // separate route: a timeout is an unknown outcome, never a refund
             ResultURL: resultUrl,
-            Occasion: tx.id, // returned in result so we can match
+            Occasion: txId,
           };
 
-          const b2cRes = await fetch(
-            mpesaUrls.b2c,
-            {
+          let b2cOk = false;
+          let b2cData: {
+            ResponseCode?: string;
+            ConversationID?: string;
+            errorMessage?: string;
+            ResponseDescription?: string;
+          } = {};
+          try {
+            const b2cRes = await fetch(mpesaUrls.b2c, {
               method: "POST",
               headers: {
                 "Content-Type": "application/json",
                 Authorization: `Bearer ${access_token}`,
               },
               body: JSON.stringify(b2cBody),
-            },
-          );
-          const b2cData = (await b2cRes.json()) as {
-            ResponseCode?: string;
-            ConversationID?: string;
-            errorMessage?: string;
-            ResponseDescription?: string;
-          };
-
-          if (!b2cRes.ok || b2cData.ResponseCode !== "0") {
-            await refundAndFail(
-              tx,
-              b2cData.errorMessage || b2cData.ResponseDescription || "B2C request rejected",
-            );
+            });
+            b2cData = (await b2cRes.json()) as typeof b2cData;
+            b2cOk = b2cRes.ok && b2cData.ResponseCode === "0";
+          } catch (e) {
+            // AMBIGUOUS: the request may have reached Safaricom. Do NOT refund. Leave 'processing'
+            // so an admin can reconcile with the M-Pesa statement, and record it.
+            console.error("[withdraw-approve] B2C outcome unknown", { txId, error: e });
+            await supabaseAdmin.from("audit_logs").insert({
+              actor_email: `admin:${adminId}`,
+              action: "withdrawal_payout_outcome_unknown",
+              entity_type: "transaction",
+              entity_id: txId,
+              metadata: {
+                note: "B2C request failed after being sent; reconcile before refunding or retrying",
+              },
+            });
             return json(
               {
                 error:
-                  b2cData.errorMessage || b2cData.ResponseDescription || "B2C request rejected",
+                  "Payout status unknown. Check the M-Pesa statement before retrying; the withdrawal stays in processing.",
               },
               502,
             );
           }
 
-          // Store conversation id so the result callback can match
-          await supabaseAdmin
+          if (!b2cOk) {
+            // Safaricom answered and explicitly rejected it: nothing was paid, safe to refund.
+            const reason =
+              b2cData.errorMessage || b2cData.ResponseDescription || "B2C request rejected";
+            await failWithdrawal(txId, reason, ["processing"]);
+            return json({ error: reason }, 502);
+          }
+
+          // Store the conversation id so the result callback can match.
+          const { error: convErr } = await supabaseAdmin
             .from("transactions")
             .update({ mpesa_checkout_id: b2cData.ConversationID ?? null })
-            .eq("id", tx.id);
+            .eq("id", txId);
+          if (convErr) console.error("[withdraw-approve] could not store conversation id", convErr);
 
           return json({
             success: true,
             status: "processing",
-            message: "Payout initiated. The user will be paid within seconds.",
+            message: "Payout submitted. Completion depends on the payment provider.",
           });
         } catch (e) {
-          const msg = e instanceof Error ? e.message : "Unknown error";
-          return json({ error: msg }, 500);
+          console.error("[withdraw-approve] error", e);
+          return json({ error: "Could not process the approval" }, 500);
         }
       },
     },
   },
 });
-
-

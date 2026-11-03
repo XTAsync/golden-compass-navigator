@@ -7,6 +7,7 @@ const DESCRIPTION =
 export const Route = createFileRoute("/guides/dividend-tracking")({
   head: () => ({
     meta: [
+      { name: "twitter:card", content: "summary" },
       { title: TITLE },
       { name: "description", content: DESCRIPTION },
       { property: "og:title", content: TITLE },

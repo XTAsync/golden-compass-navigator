@@ -7,6 +7,8 @@ import { ParallaxBackground } from "@/components/ParallaxBackground";
 export const Route = createFileRoute("/forgot-password")({
   head: () => ({
     meta: [
+      { name: "twitter:card", content: "summary" },
+      { property: "og:type", content: "website" },
       { title: "Reset Your Password — Golden Compass" },
       { name: "description", content: "Request a secure password reset link for your Golden Compass investor account." },
       { property: "og:title", content: "Reset Your Password — Golden Compass" },
@@ -46,7 +48,7 @@ function ForgotPasswordPage() {
             <CompassEmblem />
           </div>
           <h1 className="t-display t-gold mt-4" style={{ fontSize: 22, letterSpacing: "0.04em" }}>
-            Lost Your Bearings?
+            Reset your password
           </h1>
           <p className="t-serif t-sec mt-2" style={{ fontSize: 13, fontStyle: "italic" }}>
             We'll send a reset link to your email.

@@ -6,6 +6,8 @@ import { useAuth } from "@/hooks/useAuth";
 export const Route = createFileRoute("/kyc")({
   head: () => ({
     meta: [
+      { name: "twitter:card", content: "summary" },
+      { property: "og:type", content: "website" },
       { title: "KYC Verification — Golden Compass" },
       { name: "description", content: "Verify your identity with Golden Compass to unlock deposits and pool investing." },
       { name: "robots", content: "noindex, nofollow" },
@@ -121,13 +123,13 @@ function KycPage() {
     <div className="flex flex-col gap-5 px-5 pt-6 pb-28 anim-fade-up">
       <header>
         <p className="t-mono t-sec" style={{ fontSize: 9, letterSpacing: "0.18em" }}>
-          THE PASSPORT
+          IDENTITY INFORMATION
         </p>
         <h1 className="t-display t-gold mt-1" style={{ fontSize: 22 }}>
           KYC Verification
         </h1>
         <p className="t-serif t-sec mt-2" style={{ fontSize: 13, fontStyle: "italic" }}>
-          Required by regulators. We keep your details safe.
+          Identity review does not confirm regulatory authorization or enable live services.
         </p>
       </header>
 
@@ -200,7 +202,7 @@ function KycPage() {
           className="btn-brass w-full"
           style={{ height: 52, fontSize: 12 }}
         >
-          {success ? "✓ Submitted" : loading ? "Submitting…" : "⚓ Submit for Review"}
+          {success ? "✓ Submitted" : loading ? "Submitting…" : "Submit for Review"}
         </button>
       </form>
     </div>

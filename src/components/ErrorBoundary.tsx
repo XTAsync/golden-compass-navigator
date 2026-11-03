@@ -9,8 +9,8 @@ export class ErrorBoundary extends Component<Props, State> {
       return (
         <div className="fixed inset-0 flex items-center justify-center px-4" style={{ background: "var(--ocean-0)" }}>
           <div className="max-w-md text-center">
-            <h1 className="t-display t-gold" style={{ fontSize: 32 }}>⚓ Something went wrong</h1>
-            <p className="t-serif t-parch mt-4" style={{ fontSize: 14 }}>{this.state.error?.message || "An unexpected error occurred."}</p>
+            <h1 className="t-display t-gold" style={{ fontSize: 32 }}>Something went wrong</h1>
+            <p className="t-serif t-parch mt-4" style={{ fontSize: 14 }}>This screen could not load. Please try again.</p>
             <button onClick={() => window.location.reload()} className="btn-brass mt-6" style={{ padding: "10px 24px", fontSize: 11 }}>Reload</button>
           </div>
         </div>
