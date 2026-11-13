@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="assets/logo.svg" alt="golden-compass-navigator logo" width="180" />
+</p>
+
 # Golden Compass Navigator
 
 A web application prototype for investment workflows and market analysis, with portfolio views, charting, watchlists, order history, and account interfaces.
